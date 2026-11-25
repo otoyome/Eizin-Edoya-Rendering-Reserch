@@ -1,0 +1,2639 @@
+{
+  "gltf_stages": [
+    {
+      "cast_shadow": false,
+      "materials": [
+        {
+          "eizin": {
+            "color_diff_line_factor": 1.0,
+            "color_diff_line_threshold": 1.0,
+            "color_line_adjust_brightness": 0.5,
+            "color_line_adjust_saturate": 1.5,
+            "color_posterize_factor": 48.0,
+            "depth_normal_outline_factor": 0.5,
+            "material_attribute": 8388609,
+            "outline_adjust_parameter": [
+              1000.0,
+              5000.0,
+              1000.0,
+              5000.0
+            ],
+            "shade_factor": 0.5,
+            "specular_color": [
+              1.0,
+              0.0,
+              8.0,
+              0.0
+            ]
+          },
+          "gltf": {
+            "alpha_cutoff": 0.5,
+            "alpha_mode": 1,
+            "basecolor_factor": [
+              0.5879999995231628,
+              0.5879999995231628,
+              0.5879999995231628,
+              1.0
+            ],
+            "emissive_factor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "metallic_factor": 1.0,
+            "normal_scale": 1.0,
+            "occlusion_strength": 1.0,
+            "roughness_factor": 1.0
+          },
+          "index": 0
+        },
+        {
+          "eizin": {
+            "color_diff_line_factor": 1.0,
+            "color_diff_line_threshold": 0.0020000000949949026,
+            "color_line_adjust_brightness": 0.800000011920929,
+            "color_line_adjust_saturate": 1.0,
+            "color_posterize_factor": 64.0,
+            "depth_normal_outline_factor": 0.10000000149011612,
+            "material_attribute": 8388609,
+            "outline_adjust_parameter": [
+              1000.0,
+              5000.0,
+              1000.0,
+              5000.0
+            ],
+            "shade_factor": 0.550000011920929,
+            "specular_color": [
+              1.0,
+              0.0,
+              2.0,
+              0.0
+            ]
+          },
+          "gltf": {
+            "alpha_cutoff": 0.5,
+            "alpha_mode": 0,
+            "basecolor_factor": [
+              0.5879999995231628,
+              0.5879999995231628,
+              0.5879999995231628,
+              1.0
+            ],
+            "emissive_factor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "metallic_factor": 1.0,
+            "normal_scale": 1.0,
+            "occlusion_strength": 1.0,
+            "roughness_factor": 1.0
+          },
+          "index": 1
+        },
+        {
+          "eizin": {
+            "color_diff_line_factor": 1.0,
+            "color_diff_line_threshold": 0.004999999888241291,
+            "color_line_adjust_brightness": 0.800000011920929,
+            "color_line_adjust_saturate": 1.0,
+            "color_posterize_factor": 64.0,
+            "depth_normal_outline_factor": 0.019999999552965164,
+            "material_attribute": 9437185,
+            "outline_adjust_parameter": [
+              1000.0,
+              5000.0,
+              1000.0,
+              5000.0
+            ],
+            "shade_factor": 0.550000011920929,
+            "specular_color": [
+              1.0,
+              0.0,
+              2.0,
+              0.0
+            ]
+          },
+          "gltf": {
+            "alpha_cutoff": 0.5,
+            "alpha_mode": 0,
+            "basecolor_factor": [
+              0.5879999995231628,
+              0.5879999995231628,
+              0.5879999995231628,
+              1.0
+            ],
+            "emissive_factor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "metallic_factor": 0.0,
+            "normal_scale": 1.0,
+            "occlusion_strength": 1.0,
+            "roughness_factor": 1.0
+          },
+          "index": 2
+        },
+        {
+          "eizin": {
+            "color_diff_line_factor": 1.0,
+            "color_diff_line_threshold": 0.03999999910593033,
+            "color_line_adjust_brightness": 1.0,
+            "color_line_adjust_saturate": 1.0,
+            "color_posterize_factor": 22.0,
+            "depth_normal_outline_factor": 0.10000000149011612,
+            "material_attribute": 1,
+            "outline_adjust_parameter": [
+              1000.0,
+              5000.0,
+              1000.0,
+              5000.0
+            ],
+            "shade_factor": 0.44999998807907104,
+            "specular_color": [
+              1.0,
+              0.0,
+              2.0,
+              1.0
+            ]
+          },
+          "gltf": {
+            "alpha_cutoff": 0.5,
+            "alpha_mode": 1,
+            "basecolor_factor": [
+              0.5879999995231628,
+              0.5879999995231628,
+              0.5879999995231628,
+              1.0
+            ],
+            "emissive_factor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "metallic_factor": 1.0,
+            "normal_scale": 1.0,
+            "occlusion_strength": 1.0,
+            "roughness_factor": 1.0
+          },
+          "index": 3
+        },
+        {
+          "eizin": {
+            "color_diff_line_factor": 1.0,
+            "color_diff_line_threshold": 0.03999999910593033,
+            "color_line_adjust_brightness": 0.75,
+            "color_line_adjust_saturate": 0.75,
+            "color_posterize_factor": 64.0,
+            "depth_normal_outline_factor": 0.10000000149011612,
+            "material_attribute": 1,
+            "outline_adjust_parameter": [
+              1000.0,
+              5000.0,
+              1000.0,
+              5000.0
+            ],
+            "shade_factor": 0.5,
+            "specular_color": [
+              1.0,
+              0.0,
+              3.0,
+              0.0
+            ]
+          },
+          "gltf": {
+            "alpha_cutoff": 0.5,
+            "alpha_mode": 0,
+            "basecolor_factor": [
+              0.5879999995231628,
+              0.5879999995231628,
+              0.5879999995231628,
+              1.0
+            ],
+            "emissive_factor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "metallic_factor": 1.0,
+            "normal_scale": 1.0,
+            "occlusion_strength": 1.0,
+            "roughness_factor": 1.0
+          },
+          "index": 4
+        },
+        {
+          "eizin": {
+            "color_diff_line_factor": 1.0,
+            "color_diff_line_threshold": 0.004999999888241291,
+            "color_line_adjust_brightness": 0.800000011920929,
+            "color_line_adjust_saturate": 1.0,
+            "color_posterize_factor": 32.0,
+            "depth_normal_outline_factor": 0.019999999552965164,
+            "material_attribute": 1,
+            "outline_adjust_parameter": [
+              1000.0,
+              5000.0,
+              1000.0,
+              5000.0
+            ],
+            "shade_factor": 0.550000011920929,
+            "specular_color": [
+              1.0,
+              0.0,
+              2.0,
+              1.0
+            ]
+          },
+          "gltf": {
+            "alpha_cutoff": 0.5,
+            "alpha_mode": 0,
+            "basecolor_factor": [
+              0.5879999995231628,
+              0.5879999995231628,
+              0.5879999995231628,
+              1.0
+            ],
+            "emissive_factor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "metallic_factor": 1.0,
+            "normal_scale": 1.0,
+            "occlusion_strength": 1.0,
+            "roughness_factor": 1.0
+          },
+          "index": 5
+        },
+        {
+          "eizin": {
+            "color_diff_line_factor": 1.0,
+            "color_diff_line_threshold": 0.004999999888241291,
+            "color_line_adjust_brightness": 0.800000011920929,
+            "color_line_adjust_saturate": 1.0,
+            "color_posterize_factor": 64.0,
+            "depth_normal_outline_factor": 0.10000000149011612,
+            "material_attribute": 1,
+            "outline_adjust_parameter": [
+              1000.0,
+              5000.0,
+              1000.0,
+              5000.0
+            ],
+            "shade_factor": 0.550000011920929,
+            "specular_color": [
+              1.0,
+              0.0,
+              4.0,
+              1.0
+            ]
+          },
+          "gltf": {
+            "alpha_cutoff": 0.5,
+            "alpha_mode": 0,
+            "basecolor_factor": [
+              0.5879999995231628,
+              0.5879999995231628,
+              0.5879999995231628,
+              1.0
+            ],
+            "emissive_factor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "metallic_factor": 1.0,
+            "normal_scale": 1.0,
+            "occlusion_strength": 1.0,
+            "roughness_factor": 1.0
+          },
+          "index": 6
+        },
+        {
+          "eizin": {
+            "color_diff_line_factor": 1.0,
+            "color_diff_line_threshold": 0.004999999888241291,
+            "color_line_adjust_brightness": 0.800000011920929,
+            "color_line_adjust_saturate": 1.0,
+            "color_posterize_factor": 32.0,
+            "depth_normal_outline_factor": 0.019999999552965164,
+            "material_attribute": 1,
+            "outline_adjust_parameter": [
+              1000.0,
+              5000.0,
+              1000.0,
+              5000.0
+            ],
+            "shade_factor": 0.550000011920929,
+            "specular_color": [
+              1.0,
+              0.0,
+              2.0,
+              1.0
+            ]
+          },
+          "gltf": {
+            "alpha_cutoff": 0.5,
+            "alpha_mode": 0,
+            "basecolor_factor": [
+              0.5879999995231628,
+              0.5879999995231628,
+              0.5879999995231628,
+              1.0
+            ],
+            "emissive_factor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "metallic_factor": 1.0,
+            "normal_scale": 1.0,
+            "occlusion_strength": 1.0,
+            "roughness_factor": 1.0
+          },
+          "index": 7
+        },
+        {
+          "eizin": {
+            "color_diff_line_factor": 1.0,
+            "color_diff_line_threshold": 0.004999999888241291,
+            "color_line_adjust_brightness": 0.800000011920929,
+            "color_line_adjust_saturate": 1.0,
+            "color_posterize_factor": 32.0,
+            "depth_normal_outline_factor": 0.019999999552965164,
+            "material_attribute": 1,
+            "outline_adjust_parameter": [
+              1000.0,
+              5000.0,
+              1000.0,
+              5000.0
+            ],
+            "shade_factor": 0.550000011920929,
+            "specular_color": [
+              1.0,
+              0.0,
+              2.0,
+              1.0
+            ]
+          },
+          "gltf": {
+            "alpha_cutoff": 0.5,
+            "alpha_mode": 0,
+            "basecolor_factor": [
+              0.5879999995231628,
+              0.5879999995231628,
+              0.5879999995231628,
+              1.0
+            ],
+            "emissive_factor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "metallic_factor": 1.0,
+            "normal_scale": 1.0,
+            "occlusion_strength": 1.0,
+            "roughness_factor": 1.0
+          },
+          "index": 8
+        },
+        {
+          "eizin": {
+            "color_diff_line_factor": 1.0,
+            "color_diff_line_threshold": 0.00800000037997961,
+            "color_line_adjust_brightness": 0.800000011920929,
+            "color_line_adjust_saturate": 1.0,
+            "color_posterize_factor": 32.0,
+            "depth_normal_outline_factor": 0.03999999910593033,
+            "material_attribute": 1,
+            "outline_adjust_parameter": [
+              1000.0,
+              5000.0,
+              1000.0,
+              5000.0
+            ],
+            "shade_factor": 0.550000011920929,
+            "specular_color": [
+              1.0,
+              0.0,
+              2.0,
+              1.0
+            ]
+          },
+          "gltf": {
+            "alpha_cutoff": 0.5,
+            "alpha_mode": 0,
+            "basecolor_factor": [
+              0.5879999995231628,
+              0.5879999995231628,
+              0.5879999995231628,
+              1.0
+            ],
+            "emissive_factor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "metallic_factor": 1.0,
+            "normal_scale": 1.0,
+            "occlusion_strength": 1.0,
+            "roughness_factor": 1.0
+          },
+          "index": 9
+        },
+        {
+          "eizin": {
+            "color_diff_line_factor": 1.0,
+            "color_diff_line_threshold": 0.00800000037997961,
+            "color_line_adjust_brightness": 0.800000011920929,
+            "color_line_adjust_saturate": 1.0,
+            "color_posterize_factor": 32.0,
+            "depth_normal_outline_factor": 0.10000000149011612,
+            "material_attribute": 8388609,
+            "outline_adjust_parameter": [
+              1000.0,
+              5000.0,
+              1000.0,
+              5000.0
+            ],
+            "shade_factor": 0.550000011920929,
+            "specular_color": [
+              1.0,
+              0.0,
+              9.0,
+              0.0
+            ]
+          },
+          "gltf": {
+            "alpha_cutoff": 0.5,
+            "alpha_mode": 0,
+            "basecolor_factor": [
+              0.5879999995231628,
+              0.5879999995231628,
+              0.5879999995231628,
+              1.0
+            ],
+            "emissive_factor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "metallic_factor": 1.0,
+            "normal_scale": 1.0,
+            "occlusion_strength": 1.0,
+            "roughness_factor": 1.0
+          },
+          "index": 10
+        },
+        {
+          "eizin": {
+            "color_diff_line_factor": 1.0,
+            "color_diff_line_threshold": 0.0010000000474974513,
+            "color_line_adjust_brightness": 0.800000011920929,
+            "color_line_adjust_saturate": 1.0,
+            "color_posterize_factor": 256.0,
+            "depth_normal_outline_factor": 0.004000000189989805,
+            "material_attribute": 1,
+            "outline_adjust_parameter": [
+              1000.0,
+              5000.0,
+              1000.0,
+              5000.0
+            ],
+            "shade_factor": 0.550000011920929,
+            "specular_color": [
+              1.0,
+              0.0,
+              2.0,
+              1.0
+            ]
+          },
+          "gltf": {
+            "alpha_cutoff": 0.5,
+            "alpha_mode": 0,
+            "basecolor_factor": [
+              0.5879999995231628,
+              0.5879999995231628,
+              0.5879999995231628,
+              1.0
+            ],
+            "emissive_factor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "metallic_factor": 1.0,
+            "normal_scale": 1.0,
+            "occlusion_strength": 1.0,
+            "roughness_factor": 1.0
+          },
+          "index": 11
+        },
+        {
+          "eizin": {
+            "color_diff_line_factor": 1.0,
+            "color_diff_line_threshold": 0.009999999776482582,
+            "color_line_adjust_brightness": 0.800000011920929,
+            "color_line_adjust_saturate": 1.0,
+            "color_posterize_factor": 32.0,
+            "depth_normal_outline_factor": 0.03999999910593033,
+            "material_attribute": 1,
+            "outline_adjust_parameter": [
+              1000.0,
+              5000.0,
+              1000.0,
+              5000.0
+            ],
+            "shade_factor": 0.550000011920929,
+            "specular_color": [
+              1.0,
+              0.0,
+              4.0,
+              1.0
+            ]
+          },
+          "gltf": {
+            "alpha_cutoff": 0.5,
+            "alpha_mode": 0,
+            "basecolor_factor": [
+              0.5879999995231628,
+              0.5879999995231628,
+              0.5879999995231628,
+              1.0
+            ],
+            "emissive_factor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "metallic_factor": 1.0,
+            "normal_scale": 1.0,
+            "occlusion_strength": 1.0,
+            "roughness_factor": 1.0
+          },
+          "index": 12
+        },
+        {
+          "eizin": {
+            "color_diff_line_factor": 1.0,
+            "color_diff_line_threshold": 0.004999999888241291,
+            "color_line_adjust_brightness": 1.5,
+            "color_line_adjust_saturate": 1.0,
+            "color_posterize_factor": 64.0,
+            "depth_normal_outline_factor": 0.20000000298023224,
+            "material_attribute": 8388609,
+            "outline_adjust_parameter": [
+              1000.0,
+              5000.0,
+              1000.0,
+              5000.0
+            ],
+            "shade_factor": 1.0,
+            "specular_color": [
+              1.0,
+              0.0,
+              4.0,
+              0.0
+            ]
+          },
+          "gltf": {
+            "alpha_cutoff": 0.5,
+            "alpha_mode": 0,
+            "basecolor_factor": [
+              0.5879999995231628,
+              0.5879999995231628,
+              0.5879999995231628,
+              1.0
+            ],
+            "emissive_factor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "metallic_factor": 1.0,
+            "normal_scale": 1.0,
+            "occlusion_strength": 1.0,
+            "roughness_factor": 1.0
+          },
+          "index": 13
+        },
+        {
+          "eizin": {
+            "color_diff_line_factor": 0.6000000238418579,
+            "color_diff_line_threshold": 0.0020000000949949026,
+            "color_line_adjust_brightness": 1.5,
+            "color_line_adjust_saturate": 1.0,
+            "color_posterize_factor": 64.0,
+            "depth_normal_outline_factor": 0.20000000298023224,
+            "material_attribute": 10485761,
+            "outline_adjust_parameter": [
+              1000.0,
+              5000.0,
+              1000.0,
+              5000.0
+            ],
+            "shade_factor": 4.0,
+            "specular_color": [
+              1.0,
+              0.0,
+              16.0,
+              0.0
+            ]
+          },
+          "gltf": {
+            "alpha_cutoff": 0.5,
+            "alpha_mode": 0,
+            "basecolor_factor": [
+              0.5879999995231628,
+              0.5879999995231628,
+              0.5879999995231628,
+              1.0
+            ],
+            "emissive_factor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "metallic_factor": 1.0,
+            "normal_scale": 1.0,
+            "occlusion_strength": 1.0,
+            "roughness_factor": 1.0
+          },
+          "index": 14
+        },
+        {
+          "eizin": {
+            "color_diff_line_factor": 0.6000000238418579,
+            "color_diff_line_threshold": 0.0020000000949949026,
+            "color_line_adjust_brightness": 1.5,
+            "color_line_adjust_saturate": 1.0,
+            "color_posterize_factor": 64.0,
+            "depth_normal_outline_factor": 0.20000000298023224,
+            "material_attribute": 8388609,
+            "outline_adjust_parameter": [
+              1000.0,
+              5000.0,
+              1000.0,
+              5000.0
+            ],
+            "shade_factor": 4.0,
+            "specular_color": [
+              1.0,
+              0.0,
+              16.0,
+              0.0
+            ]
+          },
+          "gltf": {
+            "alpha_cutoff": 0.5,
+            "alpha_mode": 0,
+            "basecolor_factor": [
+              0.5879999995231628,
+              0.5879999995231628,
+              0.5879999995231628,
+              1.0
+            ],
+            "emissive_factor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "metallic_factor": 1.0,
+            "normal_scale": 1.0,
+            "occlusion_strength": 1.0,
+            "roughness_factor": 1.0
+          },
+          "index": 15
+        },
+        {
+          "eizin": {
+            "color_diff_line_factor": 0.6000000238418579,
+            "color_diff_line_threshold": 0.0020000000949949026,
+            "color_line_adjust_brightness": 1.5,
+            "color_line_adjust_saturate": 1.0,
+            "color_posterize_factor": 64.0,
+            "depth_normal_outline_factor": 0.20000000298023224,
+            "material_attribute": 8388609,
+            "outline_adjust_parameter": [
+              1000.0,
+              5000.0,
+              1000.0,
+              5000.0
+            ],
+            "shade_factor": 4.0,
+            "specular_color": [
+              1.0,
+              0.0,
+              16.0,
+              0.0
+            ]
+          },
+          "gltf": {
+            "alpha_cutoff": 0.5,
+            "alpha_mode": 0,
+            "basecolor_factor": [
+              0.5879999995231628,
+              0.5879999995231628,
+              0.5879999995231628,
+              1.0
+            ],
+            "emissive_factor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "metallic_factor": 1.0,
+            "normal_scale": 1.0,
+            "occlusion_strength": 1.0,
+            "roughness_factor": 1.0
+          },
+          "index": 16
+        },
+        {
+          "eizin": {
+            "color_diff_line_factor": 0.6000000238418579,
+            "color_diff_line_threshold": 0.0020000000949949026,
+            "color_line_adjust_brightness": 1.5,
+            "color_line_adjust_saturate": 1.0,
+            "color_posterize_factor": 64.0,
+            "depth_normal_outline_factor": 0.20000000298023224,
+            "material_attribute": 8388609,
+            "outline_adjust_parameter": [
+              1000.0,
+              5000.0,
+              1000.0,
+              5000.0
+            ],
+            "shade_factor": 4.0,
+            "specular_color": [
+              1.0,
+              0.0,
+              4.0,
+              1.0
+            ]
+          },
+          "gltf": {
+            "alpha_cutoff": 0.5,
+            "alpha_mode": 0,
+            "basecolor_factor": [
+              0.5879999995231628,
+              0.5879999995231628,
+              0.5879999995231628,
+              1.0
+            ],
+            "emissive_factor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "metallic_factor": 1.0,
+            "normal_scale": 1.0,
+            "occlusion_strength": 1.0,
+            "roughness_factor": 1.0
+          },
+          "index": 17
+        },
+        {
+          "eizin": {
+            "color_diff_line_factor": 0.6000000238418579,
+            "color_diff_line_threshold": 0.0020000000949949026,
+            "color_line_adjust_brightness": 1.5,
+            "color_line_adjust_saturate": 1.0,
+            "color_posterize_factor": 64.0,
+            "depth_normal_outline_factor": 0.20000000298023224,
+            "material_attribute": 8388609,
+            "outline_adjust_parameter": [
+              1000.0,
+              5000.0,
+              1000.0,
+              5000.0
+            ],
+            "shade_factor": 4.0,
+            "specular_color": [
+              1.0,
+              0.0,
+              4.0,
+              1.0
+            ]
+          },
+          "gltf": {
+            "alpha_cutoff": 0.5,
+            "alpha_mode": 0,
+            "basecolor_factor": [
+              0.5879999995231628,
+              0.5879999995231628,
+              0.5879999995231628,
+              1.0
+            ],
+            "emissive_factor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "metallic_factor": 1.0,
+            "normal_scale": 1.0,
+            "occlusion_strength": 1.0,
+            "roughness_factor": 1.0
+          },
+          "index": 18
+        },
+        {
+          "eizin": {
+            "color_diff_line_factor": 0.6000000238418579,
+            "color_diff_line_threshold": 0.0020000000949949026,
+            "color_line_adjust_brightness": 1.5,
+            "color_line_adjust_saturate": 1.0,
+            "color_posterize_factor": 64.0,
+            "depth_normal_outline_factor": 0.20000000298023224,
+            "material_attribute": 8388609,
+            "outline_adjust_parameter": [
+              1000.0,
+              5000.0,
+              1000.0,
+              5000.0
+            ],
+            "shade_factor": 4.0,
+            "specular_color": [
+              1.0,
+              0.0,
+              4.0,
+              1.0
+            ]
+          },
+          "gltf": {
+            "alpha_cutoff": 0.5,
+            "alpha_mode": 0,
+            "basecolor_factor": [
+              0.5879999995231628,
+              0.5879999995231628,
+              0.5879999995231628,
+              1.0
+            ],
+            "emissive_factor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "metallic_factor": 1.0,
+            "normal_scale": 1.0,
+            "occlusion_strength": 1.0,
+            "roughness_factor": 1.0
+          },
+          "index": 19
+        },
+        {
+          "eizin": {
+            "color_diff_line_factor": 1.0,
+            "color_diff_line_threshold": 0.05000000074505806,
+            "color_line_adjust_brightness": 0.800000011920929,
+            "color_line_adjust_saturate": 1.0,
+            "color_posterize_factor": 64.0,
+            "depth_normal_outline_factor": 0.10000000149011612,
+            "material_attribute": 8388609,
+            "outline_adjust_parameter": [
+              1000.0,
+              5000.0,
+              1000.0,
+              5000.0
+            ],
+            "shade_factor": 1.0,
+            "specular_color": [
+              1.0,
+              0.0,
+              8.0,
+              0.0
+            ]
+          },
+          "gltf": {
+            "alpha_cutoff": 0.5,
+            "alpha_mode": 1,
+            "basecolor_factor": [
+              0.5879999995231628,
+              0.5879999995231628,
+              0.5879999995231628,
+              1.0
+            ],
+            "emissive_factor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "metallic_factor": 1.0,
+            "normal_scale": 1.0,
+            "occlusion_strength": 1.0,
+            "roughness_factor": 1.0
+          },
+          "index": 20
+        },
+        {
+          "eizin": {
+            "color_diff_line_factor": 1.0,
+            "color_diff_line_threshold": 9.999999747378752e-06,
+            "color_line_adjust_brightness": 5.0,
+            "color_line_adjust_saturate": 1.5,
+            "color_posterize_factor": 175.0,
+            "depth_normal_outline_factor": 0.019999999552965164,
+            "material_attribute": 1,
+            "outline_adjust_parameter": [
+              1000.0,
+              5000.0,
+              1000.0,
+              5000.0
+            ],
+            "shade_factor": 3.0,
+            "specular_color": [
+              1.0,
+              0.0,
+              64.0,
+              1.0
+            ]
+          },
+          "gltf": {
+            "alpha_cutoff": 0.5,
+            "alpha_mode": 0,
+            "basecolor_factor": [
+              0.5879999995231628,
+              0.5879999995231628,
+              0.5879999995231628,
+              1.0
+            ],
+            "emissive_factor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "metallic_factor": 1.0,
+            "normal_scale": 1.0,
+            "occlusion_strength": 1.0,
+            "roughness_factor": 1.0
+          },
+          "index": 21
+        },
+        {
+          "eizin": {
+            "color_diff_line_factor": 1.0,
+            "color_diff_line_threshold": 0.004999999888241291,
+            "color_line_adjust_brightness": 0.800000011920929,
+            "color_line_adjust_saturate": 1.0,
+            "color_posterize_factor": 64.0,
+            "depth_normal_outline_factor": 0.20000000298023224,
+            "material_attribute": 1,
+            "outline_adjust_parameter": [
+              1000.0,
+              5000.0,
+              1000.0,
+              5000.0
+            ],
+            "shade_factor": 0.550000011920929,
+            "specular_color": [
+              1.0,
+              0.0,
+              8.0,
+              1.0
+            ]
+          },
+          "gltf": {
+            "alpha_cutoff": 0.5,
+            "alpha_mode": 0,
+            "basecolor_factor": [
+              0.5879999995231628,
+              0.5879999995231628,
+              0.5879999995231628,
+              1.0
+            ],
+            "emissive_factor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "metallic_factor": 1.0,
+            "normal_scale": 1.0,
+            "occlusion_strength": 1.0,
+            "roughness_factor": 1.0
+          },
+          "index": 22
+        },
+        {
+          "eizin": {
+            "color_diff_line_factor": 1.0,
+            "color_diff_line_threshold": 0.00800000037997961,
+            "color_line_adjust_brightness": 0.800000011920929,
+            "color_line_adjust_saturate": 1.0,
+            "color_posterize_factor": 48.0,
+            "depth_normal_outline_factor": 0.4000000059604645,
+            "material_attribute": 1,
+            "outline_adjust_parameter": [
+              1000.0,
+              5000.0,
+              1000.0,
+              5000.0
+            ],
+            "shade_factor": 0.5,
+            "specular_color": [
+              1.0,
+              0.0,
+              4.0,
+              1.0
+            ]
+          },
+          "gltf": {
+            "alpha_cutoff": 0.5,
+            "alpha_mode": 0,
+            "basecolor_factor": [
+              0.5879999995231628,
+              0.5879999995231628,
+              0.5879999995231628,
+              1.0
+            ],
+            "emissive_factor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "metallic_factor": 1.0,
+            "normal_scale": 1.0,
+            "occlusion_strength": 1.0,
+            "roughness_factor": 1.0
+          },
+          "index": 23
+        },
+        {
+          "eizin": {
+            "color_diff_line_factor": 1.0,
+            "color_diff_line_threshold": 0.019999999552965164,
+            "color_line_adjust_brightness": 0.800000011920929,
+            "color_line_adjust_saturate": 1.0,
+            "color_posterize_factor": 8.0,
+            "depth_normal_outline_factor": 0.019999999552965164,
+            "material_attribute": 8388609,
+            "outline_adjust_parameter": [
+              1000.0,
+              5000.0,
+              1000.0,
+              5000.0
+            ],
+            "shade_factor": 0.550000011920929,
+            "specular_color": [
+              1.0,
+              0.0,
+              2.0,
+              0.0
+            ]
+          },
+          "gltf": {
+            "alpha_cutoff": 0.5,
+            "alpha_mode": 0,
+            "basecolor_factor": [
+              0.5879999995231628,
+              0.5879999995231628,
+              0.5879999995231628,
+              1.0
+            ],
+            "emissive_factor": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "metallic_factor": 1.0,
+            "normal_scale": 1.0,
+            "occlusion_strength": 1.0,
+            "roughness_factor": 1.0
+          },
+          "index": 24
+        }
+      ],
+      "rotation": [
+        0.0,
+        1.5707963705062866,
+        0.0
+      ],
+      "scaling": 12.5,
+      "stage_index": 0,
+      "translation": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  ],
+  "pmx_models": [
+    {
+      "materials": [
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 1.0,
+          "color_diff_line_threshold": 0.0,
+          "color_line_adjust_brightness": 0.5,
+          "color_line_adjust_saturate": 1.5,
+          "color_posterize_factor": 8.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 0,
+          "material_attribute": 27262977,
+          "name": "体",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 1.0,
+          "color_diff_line_threshold": 0.009999999776482582,
+          "color_line_adjust_brightness": 0.75,
+          "color_line_adjust_saturate": 0.75,
+          "color_posterize_factor": 64.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 1,
+          "material_attribute": 27262977,
+          "name": "後頭部",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 1.0,
+          "color_diff_line_threshold": 0.0010000000474974513,
+          "color_line_adjust_brightness": 0.800000011920929,
+          "color_line_adjust_saturate": 0.699999988079071,
+          "color_posterize_factor": 64.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 2,
+          "material_attribute": 94371841,
+          "name": "顔",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 1.0,
+          "color_diff_line_threshold": 0.009999999776482582,
+          "color_line_adjust_brightness": 0.75,
+          "color_line_adjust_saturate": 0.75,
+          "color_posterize_factor": 64.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 3,
+          "material_attribute": 27262977,
+          "name": "瞼",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 1.0,
+          "color_diff_line_threshold": 0.009999999776482582,
+          "color_line_adjust_brightness": 0.75,
+          "color_line_adjust_saturate": 0.75,
+          "color_posterize_factor": 64.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 4,
+          "material_attribute": 27262977,
+          "name": "口内",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 1.0,
+          "color_diff_line_threshold": 0.009999999776482582,
+          "color_line_adjust_brightness": 0.75,
+          "color_line_adjust_saturate": 0.75,
+          "color_posterize_factor": 64.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 5,
+          "material_attribute": 27262977,
+          "name": "舌",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 1.0,
+          "color_diff_line_threshold": 0.009999999776482582,
+          "color_line_adjust_brightness": 0.75,
+          "color_line_adjust_saturate": 0.75,
+          "color_posterize_factor": 64.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 6,
+          "material_attribute": 27262977,
+          "name": "歯",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 1.0,
+          "color_diff_line_threshold": 0.009999999776482582,
+          "color_line_adjust_brightness": 0.75,
+          "color_line_adjust_saturate": 0.75,
+          "color_posterize_factor": 64.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 7,
+          "material_attribute": 27262977,
+          "name": "眉毛",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 1.0,
+          "color_diff_line_threshold": 0.009999999776482582,
+          "color_line_adjust_brightness": 0.75,
+          "color_line_adjust_saturate": 0.75,
+          "color_posterize_factor": 64.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 8,
+          "material_attribute": 27262977,
+          "name": "睫毛",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 1.0,
+          "color_diff_line_threshold": 1.0,
+          "color_line_adjust_brightness": 1.0,
+          "color_line_adjust_saturate": 1.0,
+          "color_posterize_factor": 64.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 9,
+          "material_attribute": 27262977,
+          "name": "瞳",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 0.0,
+          "color_diff_line_threshold": 0.009999999776482582,
+          "color_line_adjust_brightness": 0.75,
+          "color_line_adjust_saturate": 0.75,
+          "color_posterize_factor": 64.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 10,
+          "material_attribute": 27262977,
+          "name": "眼球-白",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 1.0,
+          "color_diff_line_threshold": 0.009999999776482582,
+          "color_line_adjust_brightness": 0.75,
+          "color_line_adjust_saturate": 0.75,
+          "color_posterize_factor": 64.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 11,
+          "material_attribute": 27262977,
+          "name": "髪の生え際",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 1.0,
+          "color_diff_line_threshold": 0.0,
+          "color_line_adjust_brightness": 1.5,
+          "color_line_adjust_saturate": 1.0,
+          "color_posterize_factor": 64.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 12,
+          "material_attribute": 27262977,
+          "name": "髪-前",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 1.0,
+          "color_diff_line_threshold": 0.0,
+          "color_line_adjust_brightness": 1.5,
+          "color_line_adjust_saturate": 1.0,
+          "color_posterize_factor": 64.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            0.6235294342041016,
+            0.6235294342041016,
+            0.6235294342041016,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 13,
+          "material_attribute": 27262977,
+          "name": "髪-裏",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 1.0,
+          "color_diff_line_threshold": 0.0,
+          "color_line_adjust_brightness": 0.5,
+          "color_line_adjust_saturate": 1.0,
+          "color_posterize_factor": 64.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 14,
+          "material_attribute": 27262977,
+          "name": "ショーツ",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 1.0,
+          "color_diff_line_threshold": 0.0,
+          "color_line_adjust_brightness": 1.5,
+          "color_line_adjust_saturate": 1.0,
+          "color_posterize_factor": 64.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 15,
+          "material_attribute": 27262977,
+          "name": "服",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 1.0,
+          "color_diff_line_threshold": 0.009999999776482582,
+          "color_line_adjust_brightness": 0.75,
+          "color_line_adjust_saturate": 0.75,
+          "color_posterize_factor": 64.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 16,
+          "material_attribute": 27262977,
+          "name": "飾り",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 1.0,
+          "color_diff_line_threshold": 0.0,
+          "color_line_adjust_brightness": 1.5,
+          "color_line_adjust_saturate": 1.0,
+          "color_posterize_factor": 64.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 17,
+          "material_attribute": 27262977,
+          "name": "上着",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        }
+      ],
+      "model_index": 0
+    },
+    {
+      "materials": [
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 1.0,
+          "color_diff_line_threshold": 0.0,
+          "color_line_adjust_brightness": 0.5,
+          "color_line_adjust_saturate": 1.0,
+          "color_posterize_factor": 64.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 0,
+          "material_attribute": 27262977,
+          "name": "羽根",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 1.0,
+          "color_diff_line_threshold": 0.0,
+          "color_line_adjust_brightness": 0.5,
+          "color_line_adjust_saturate": 1.0,
+          "color_posterize_factor": 64.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 1,
+          "material_attribute": 27262977,
+          "name": "体",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 1.0,
+          "color_diff_line_threshold": 0.009999999776482582,
+          "color_line_adjust_brightness": 0.75,
+          "color_line_adjust_saturate": 0.75,
+          "color_posterize_factor": 64.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 2,
+          "material_attribute": 27262977,
+          "name": "脇",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 1.0,
+          "color_diff_line_threshold": 0.009999999776482582,
+          "color_line_adjust_brightness": 0.75,
+          "color_line_adjust_saturate": 0.75,
+          "color_posterize_factor": 64.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 3,
+          "material_attribute": 27262977,
+          "name": "後頭部",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 1.0,
+          "color_diff_line_threshold": 0.0,
+          "color_line_adjust_brightness": 0.75,
+          "color_line_adjust_saturate": 0.75,
+          "color_posterize_factor": 64.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 4,
+          "material_attribute": 94371841,
+          "name": "顔",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 1.0,
+          "color_diff_line_threshold": 0.0,
+          "color_line_adjust_brightness": 0.75,
+          "color_line_adjust_saturate": 0.75,
+          "color_posterize_factor": 64.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 5,
+          "material_attribute": 27262977,
+          "name": "瞼",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 1.0,
+          "color_diff_line_threshold": 0.009999999776482582,
+          "color_line_adjust_brightness": 0.75,
+          "color_line_adjust_saturate": 0.75,
+          "color_posterize_factor": 64.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 6,
+          "material_attribute": 27262977,
+          "name": "口内",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 1.0,
+          "color_diff_line_threshold": 0.009999999776482582,
+          "color_line_adjust_brightness": 0.75,
+          "color_line_adjust_saturate": 0.75,
+          "color_posterize_factor": 64.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 7,
+          "material_attribute": 27262977,
+          "name": "舌",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 1.0,
+          "color_diff_line_threshold": 0.009999999776482582,
+          "color_line_adjust_brightness": 0.75,
+          "color_line_adjust_saturate": 0.75,
+          "color_posterize_factor": 64.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 8,
+          "material_attribute": 27262977,
+          "name": "歯",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 1.0,
+          "color_diff_line_threshold": 0.009999999776482582,
+          "color_line_adjust_brightness": 0.75,
+          "color_line_adjust_saturate": 0.75,
+          "color_posterize_factor": 64.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 9,
+          "material_attribute": 27262977,
+          "name": "眉毛",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 1.0,
+          "color_diff_line_threshold": 0.009999999776482582,
+          "color_line_adjust_brightness": 0.75,
+          "color_line_adjust_saturate": 0.75,
+          "color_posterize_factor": 64.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 10,
+          "material_attribute": 27262977,
+          "name": "睫毛",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 1.0,
+          "color_diff_line_threshold": 0.0,
+          "color_line_adjust_brightness": 1.0,
+          "color_line_adjust_saturate": 1.0,
+          "color_posterize_factor": 64.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 11,
+          "material_attribute": 27262977,
+          "name": "瞳",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 0.0,
+          "color_diff_line_threshold": 0.0,
+          "color_line_adjust_brightness": 1.0,
+          "color_line_adjust_saturate": 1.0,
+          "color_posterize_factor": 256.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 12,
+          "material_attribute": 27262977,
+          "name": "眼球-白",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 1.0,
+          "color_diff_line_threshold": 0.009999999776482582,
+          "color_line_adjust_brightness": 0.75,
+          "color_line_adjust_saturate": 0.75,
+          "color_posterize_factor": 64.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 13,
+          "material_attribute": 27262977,
+          "name": "髪の生え際",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 1.0,
+          "color_diff_line_threshold": 0.0,
+          "color_line_adjust_brightness": 0.75,
+          "color_line_adjust_saturate": 0.75,
+          "color_posterize_factor": 64.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 14,
+          "material_attribute": 27262977,
+          "name": "髪-前",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 1.0,
+          "color_diff_line_threshold": 0.009999999776482582,
+          "color_line_adjust_brightness": 0.75,
+          "color_line_adjust_saturate": 0.75,
+          "color_posterize_factor": 64.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            0.6235294342041016,
+            0.6235294342041016,
+            0.6235294342041016,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 15,
+          "material_attribute": 27262977,
+          "name": "髪-裏",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        {
+          "alpha_clip_threshold": 0.009999999776482582,
+          "alpha_dither_factor": 0.0,
+          "color_diff_line_factor": 1.0,
+          "color_diff_line_threshold": 0.0010000000474974513,
+          "color_line_adjust_brightness": 1.5,
+          "color_line_adjust_saturate": 1.0,
+          "color_posterize_factor": 64.0,
+          "depth_normal_outline_factor": 1.0,
+          "diffuse_color": [
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929,
+            1.0
+          ],
+          "edge_color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "edge_size": 0.0,
+          "index": 16,
+          "material_attribute": 27262977,
+          "name": "服",
+          "outline_adjust_parameter": [
+            0.0,
+            50.0,
+            0.0,
+            50.0
+          ],
+          "pipeline_state_name": "eizin_generate_gbuffer",
+          "shadow_threshold_texcoord_offset": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "specular_color": [
+            1.0,
+            0.0,
+            2.0,
+            0.0
+          ]
+        }
+      ],
+      "model_index": 1
+    }
+  ],
+  "version": 1
+}

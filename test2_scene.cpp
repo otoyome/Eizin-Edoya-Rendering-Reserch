@@ -2,6 +2,8 @@
 
 #include "implot/implot.h"
 
+#include <fstream>
+
 //	SMAA用ルックアップテクスチャ
 #include "subpixel_morphological_anti_aliasing/Textures/AreaTex.h"
 #include "subpixel_morphological_anti_aliasing/Textures/SearchTex.h"
@@ -1213,6 +1215,12 @@ void test2_scene::initialize_scene()
 			}
 		}
 	}
+
+	//	マテリアル設定のJSONがあれば読み込む(無ければコード上の初期値のまま)
+	if (std::ifstream(get_material_settings_path()))
+	{
+		load_material_settings(get_material_settings_path());
+	}
 }
 
 bool test2_scene::uninitialize_core()
@@ -1428,8 +1436,8 @@ void test2_scene::imgui_render_core()
 			#if defined(USE_EIZIN_SHADER)
 						ImGui::DragFloat("roughness", &material.default.specular_color.x);
 						ImGui::DragFloat("metalness", &material.default.specular_color.y);
-						ImGui::DragFloat("shading_steps", &material.default.specular_color.y);
-						ImGui::DragFloat("noise_factor", &material.default.specular_color.y);
+						ImGui::DragFloat("shading_steps", &material.default.specular_color.z);
+						ImGui::DragFloat("noise_factor", &material.default.specular_color.w);
 
 						ImGui::DragFloat("color_diff_line_factor", &material.default.color_diff_line_factor);
 						ImGui::DragFloat("color_diff_line_threshold", &material.default.color_diff_line_threshold);
