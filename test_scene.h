@@ -10,4 +10,5 @@ public:
 protected:
 	void initialize_character_models() override;
 	void initialize_stage_models() override;
+	const char* get_material_settings_path() const override;
 };

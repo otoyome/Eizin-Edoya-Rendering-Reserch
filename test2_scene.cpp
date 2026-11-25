@@ -48,27 +48,6 @@ namespace
 	//	アンチエイリアス用の定数バッファスロット(各シェーダーと合わせること)
 	static constexpr int FxaaCBVIndex = 12;
 	static constexpr int SmaaCBVIndex = 13;
-	static constexpr int TaaCBVIndex = 3;
-
-	//	ハルトン数列によるサブピクセルジッター(-0.5～+0.5ピクセル)
-	DirectX::XMFLOAT2 calculate_halton_jitter(int frame_index)
-	{
-		static constexpr int jitter_sequence_length = 8;
-		auto halton = [](int index, int base)
-		{
-			float result = 0.0f;
-			float fraction = 1.0f / base;
-			while (index > 0)
-			{
-				result += (index % base) * fraction;
-				index /= base;
-				fraction /= base;
-			}
-			return result;
-		};
-		int index = (frame_index % jitter_sequence_length) + 1;
-		return { halton(index, 2) - 0.5f, halton(index, 3) - 0.5f };
-	}
 
 	CONST LONG SHADOWMAP_WIDTH{ 4096 };
 	CONST LONG SHADOWMAP_HEIGHT{ 4096 };
@@ -181,12 +160,6 @@ bool test2_scene::initialize_core()
 		{
 			buffer_desc.ByteWidth = sizeof(smaa_constants);
 			hr = get_renderdata()->device->CreateBuffer(&buffer_desc, nullptr, smaa_constant_buffer.GetAddressOf());
-			_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-		}
-		//	TAA用定数バッファ
-		{
-			buffer_desc.ByteWidth = sizeof(taa_constants);
-			hr = get_renderdata()->device->CreateBuffer(&buffer_desc, nullptr, taa_constant_buffer.GetAddressOf());
 			_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 		}
 	}
@@ -353,7 +326,7 @@ bool test2_scene::initialize_core()
 			_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 		}
 
-		//	アンチエイリアス出力先(シーンカラーと同じ形式。TAAはUAVで書き込む)
+		//	アンチエイリアス出力先(シーンカラーと同じ形式)
 		{
 			Microsoft::WRL::ComPtr<ID3D11Texture2D> antialias_buffer{};
 			hr = get_renderdata()->device->CreateTexture2D(&texture2d_desc, NULL, antialias_buffer.GetAddressOf());
@@ -361,22 +334,6 @@ bool test2_scene::initialize_core()
 			hr = get_renderdata()->device->CreateRenderTargetView(antialias_buffer.Get(), NULL, antialias_render_target_view.GetAddressOf());
 			_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 			hr = get_renderdata()->device->CreateShaderResourceView(antialias_buffer.Get(), NULL, antialias_shader_resource_view.GetAddressOf());
-			_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-			hr = get_renderdata()->device->CreateUnorderedAccessView(antialias_buffer.Get(), NULL, antialias_unordered_access_view.GetAddressOf());
-			_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-		}
-
-		//	TAA履歴バッファ(2枚を交互に使う)
-		for (int index = 0; index < 2; ++index)
-		{
-			D3D11_TEXTURE2D_DESC history_desc = texture2d_desc;
-			history_desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
-			Microsoft::WRL::ComPtr<ID3D11Texture2D> history_buffer{};
-			hr = get_renderdata()->device->CreateTexture2D(&history_desc, NULL, history_buffer.GetAddressOf());
-			_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-			hr = get_renderdata()->device->CreateShaderResourceView(history_buffer.Get(), NULL, taa_accumlate_shader_resource_view[index].GetAddressOf());
-			_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-			hr = get_renderdata()->device->CreateUnorderedAccessView(history_buffer.Get(), NULL, taa_accumlate_unordered_access_view[index].GetAddressOf());
 			_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 		}
 
@@ -521,9 +478,6 @@ bool test2_scene::initialize_core()
 		create_ps_from_cso(get_renderdata()->device.Get(), "smaa_blending_weight_calculation_ps.cso", smaa_blending_weight_calculation_pixel_shader.GetAddressOf());
 		create_vs_from_cso(get_renderdata()->device.Get(), "smaa_neighborhood_blending_vs.cso", smaa_neighborhood_blending_vertex_shader.GetAddressOf(), nullptr, nullptr, 0);
 		create_ps_from_cso(get_renderdata()->device.Get(), "smaa_neighborhood_blending_ps.cso", smaa_neighborhood_blending_pixel_shader.GetAddressOf());
-
-		//	TAA
-		create_cs_from_cso(get_renderdata()->device.Get(), "temporal_anti_alias_cs.cso", temporal_anti_alias_compute_shader.GetAddressOf());
 	}
 
 	//	シーンの初期化処理
@@ -976,19 +930,6 @@ void test2_scene::render_gltf_stages_shadow(UINT light_shadow_mask)
 	}
 }
 
-void test2_scene::update_taa_jitter()
-{
-	//	TAA以外ではジッターしない
-	DirectX::XMFLOAT2 jitter_uv{ 0.0f, 0.0f };
-	if (antialias == antialias_mode::taa && taa_is_sub_pixel_jitter)
-	{
-		DirectX::XMFLOAT2 jitter_pixel = calculate_halton_jitter(taa_jitter_index++);
-		jitter_uv.x = jitter_pixel.x / static_cast<float>(SCREEN_WIDTH);
-		jitter_uv.y = jitter_pixel.y / static_cast<float>(SCREEN_HEIGHT);
-	}
-	set_jitter_uv_offset(jitter_uv);
-}
-
 void test2_scene::antialias_pass()
 {
 	switch (antialias)
@@ -999,20 +940,14 @@ void test2_scene::antialias_pass()
 	case antialias_mode::smaa:
 		smaa_pass();
 		break;
-	case antialias_mode::taa:
-		taa_pass();
-		break;
 	default:
 		break;
 	}
 
 	//	次のパスでSRVとして使うので外す
 	get_renderdata()->immediate_context->OMSetRenderTargets(0, nullptr, nullptr);
-	ID3D11UnorderedAccessView* null_unordered_access_views[2] = {};
-	get_renderdata()->immediate_context->CSSetUnorderedAccessViews(0, 2, null_unordered_access_views, nullptr);
 	ID3D11ShaderResourceView* null_shader_resource_views[4] = {};
 	get_renderdata()->immediate_context->PSSetShaderResources(0, 4, null_shader_resource_views);
-	get_renderdata()->immediate_context->CSSetShaderResources(0, 4, null_shader_resource_views);
 }
 
 void test2_scene::fxaa_pass()
@@ -1106,53 +1041,6 @@ void test2_scene::smaa_pass()
 	//	デフォルトのサンプラーに戻す
 	get_renderdata()->set_default_sampler();
 }
-
-void test2_scene::taa_pass()
-{
-	auto* immediate_context = get_renderdata()->immediate_context.Get();
-
-	//	定数バッファ更新
-	taa_constant.taa_jitter = get_current_jitter_uv_offset();
-	taa_constant.taa_previous_jitter = get_previous_jitter_uv_offset();
-	immediate_context->UpdateSubresource(taa_constant_buffer.Get(), 0, 0, &taa_constant, 0, 0);
-	taa_constant.taa_reset = 0;
-	immediate_context->CSSetConstantBuffers(TaaCBVIndex, 1, taa_constant_buffer.GetAddressOf());
-
-	const int current_buffer_index = (taa_frame_index + 0) % 2;
-	const int previous_buffer_index = (taa_frame_index + 1) % 2;
-	++taa_frame_index;
-
-	immediate_context->OMSetRenderTargets(0, nullptr, nullptr);
-
-	ID3D11ShaderResourceView* shader_resource_views[] =
-	{
-		filtered_shader_resource_view.Get(),
-		taa_accumlate_shader_resource_view[previous_buffer_index].Get(),
-		g_buffer_shader_resource_view[GB_Velocity].Get(),
-		g_buffer_shader_resource_view[GB_Normal_Depth].Get(),
-	};
-	immediate_context->CSSetShaderResources(0, ARRAYSIZE(shader_resource_views), shader_resource_views);
-
-	ID3D11SamplerState* sampler_states[] =
-	{
-		get_renderdata()->sampler_states[static_cast<size_t>(render_data::SAMPLER_STATE::POINT_CLAMP)].Get(),
-		get_renderdata()->sampler_states[static_cast<size_t>(render_data::SAMPLER_STATE::LINEAR_CLAMP)].Get(),
-	};
-	immediate_context->CSSetSamplers(0, ARRAYSIZE(sampler_states), sampler_states);
-
-	ID3D11UnorderedAccessView* unordered_access_views[] =
-	{
-		antialias_unordered_access_view.Get(),
-		taa_accumlate_unordered_access_view[current_buffer_index].Get(),
-	};
-	immediate_context->CSSetUnorderedAccessViews(0, ARRAYSIZE(unordered_access_views), unordered_access_views, nullptr);
-
-	immediate_context->CSSetShader(temporal_anti_alias_compute_shader.Get(), nullptr, 0);
-	static constexpr UINT thread_group_size = 8;
-	immediate_context->Dispatch((SCREEN_WIDTH + thread_group_size - 1) / thread_group_size, (SCREEN_HEIGHT + thread_group_size - 1) / thread_group_size, 1);
-	immediate_context->CSSetShader(nullptr, nullptr, 0);
-}
-
 void test2_scene::initialize_scene()
 {
 #if !defined(USE_EIZIN_SHADER)
@@ -1347,14 +1235,26 @@ void test2_scene::imgui_render_core()
 			ImGui::Separator();
 		}
 
+		//	マテリアル設定のJSON保存/読込
+		{
+			ImGui::TextUnformatted(get_material_settings_path());
+			if (ImGui::Button("save materials"))
+				save_material_settings(get_material_settings_path());
+			ImGui::SameLine();
+			if (ImGui::Button("load materials"))
+				load_material_settings(get_material_settings_path());
+			if (!material_settings_message.empty())
+				ImGui::TextUnformatted(material_settings_message.c_str());
+			ImGui::Separator();
+		}
+
 		//	アンチエイリアス(ファイナルパスの後に適応)
 		{
-			const char* antialias_names[] = { "none", "fxaa", "smaa", "taa" };
+			const char* antialias_names[] = { "none", "fxaa", "smaa" };
 			int antialias_index = static_cast<int>(antialias);
 			if (ImGui::Combo("antialias", &antialias_index, antialias_names, IM_ARRAYSIZE(antialias_names)))
 			{
 				antialias = static_cast<antialias_mode>(antialias_index);
-				taa_constant.taa_reset = 1;
 			}
 			switch (antialias)
 			{
@@ -1379,13 +1279,6 @@ void test2_scene::imgui_render_core()
 				smaa_constant.smaa_corner_rounding = static_cast<UINT>(corner_rounding);
 				break;
 			}
-			case antialias_mode::taa:
-				if (ImGui::Button("taa_reset"))
-					taa_constant.taa_reset = 1;
-				ImGui::Checkbox("taa_sub_pixel_jitter", &taa_is_sub_pixel_jitter);
-				ImGui::Checkbox("taa_history_display", reinterpret_cast<bool*>(&taa_constant.taa_history_display));
-				ImGui::SliderFloat("taa_blend_min", &taa_constant.taa_blend_min, 0.01f, 1.0f);
-				ImGui::SliderFloat("taa_blend_max", &taa_constant.taa_blend_max, 0.01f, 1.0f);
 				break;
 			default:
 				break;
@@ -1454,6 +1347,25 @@ void test2_scene::imgui_render_core()
 							ImGui::DragFloat("depth_normal_outline_factor", &c.depth_normal_outline_factor, 0.001f);
 							ImGui::DragFloat2("depth_normal_outline_range", &c.outline_adjust_parameter.z);
 							ImGui::DragFloat("color_posterize_factor", &c.color_posterize_factor, 0.1f);
+
+							//	glTF本来のマテリアル値(変更したらGPUのマテリアルバッファへ反映する)
+							if (m < stage.model->materials.size() && ImGui::TreeNode("gltf material"))
+							{
+								auto& d = stage.model->materials[m].data;
+								bool changed = false;
+								changed |= ImGui::ColorEdit4("basecolor_factor", d.pbr_metallic_roughness.basecolor_factor);
+								changed |= ImGui::ColorEdit3("emissive_factor", d.emissive_factor);
+								changed |= ImGui::SliderFloat("metallic_factor", &d.pbr_metallic_roughness.metallic_factor, 0.0f, 1.0f);
+								changed |= ImGui::SliderFloat("roughness_factor", &d.pbr_metallic_roughness.roughness_factor, 0.0f, 1.0f);
+								const char* alpha_mode_names[] = { "OPAQUE", "MASK", "BLEND" };
+								changed |= ImGui::Combo("alpha_mode", &d.alpha_mode, alpha_mode_names, IM_ARRAYSIZE(alpha_mode_names));
+								changed |= ImGui::SliderFloat("alpha_cutoff", &d.alpha_cutoff, 0.0f, 1.0f);
+								changed |= ImGui::DragFloat("normal_scale", &d.normal_texture.scale, 0.01f);
+								changed |= ImGui::SliderFloat("occlusion_strength", &d.occlusion_texture.strength, 0.0f, 1.0f);
+								if (changed)
+									stage.model->update_material_resource(get_renderdata()->immediate_context.Get());
+								ImGui::TreePop();
+							}
 							ImGui::TreePop();
 						}
 						ImGui::PopID();
@@ -1742,9 +1654,6 @@ void test2_scene::update_core(float elapsed_time)
 
 void test2_scene::render_core(float elapsed_time)
 {
-	//	TAA用サブピクセルジッター更新(シーン定数のビュー射影行列に反映される)
-	update_taa_jitter();
-
 	//	GBuffer生成
 	generate_gbuffer_pass(elapsed_time);
 

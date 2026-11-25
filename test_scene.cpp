@@ -215,3 +215,8 @@ void test_scene::initialize_stage_models()
 	});
 #endif	//	defined(USE_EIZIN_SHADER)
 }
+
+const char* test_scene::get_material_settings_path() const
+{
+	return ".\\resources\\material_settings\\test_scene.json";
+}

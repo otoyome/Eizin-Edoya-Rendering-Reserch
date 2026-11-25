@@ -246,6 +246,12 @@ protected:
 	//	GBuffer生成用パイプラインステート名
 	static const char* get_gbuffer_pipeline_state_name();
 
+	//	マテリアル設定のJSON保存/読込(仮実装 : test2_scene_material_settings.cpp)
+	virtual const char* get_material_settings_path() const;
+	bool save_material_settings(const char* path);
+	bool load_material_settings(const char* path);
+	std::string material_settings_message;
+
 private:
 	void generate_gbuffer_pass(float elapsed_time);
 	void set_deferred_common_resource();
@@ -279,14 +285,12 @@ public:
 		none,
 		fxaa,
 		smaa,
-		taa,
 	};
 	antialias_mode antialias = antialias_mode::fxaa;
 
 	//	アンチエイリアス結果の出力先(シーンカラーと同じ形式)
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> antialias_render_target_view;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> antialias_shader_resource_view;
-	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> antialias_unordered_access_view;
 	std::unique_ptr<sprite> final_pass_antialias_render_sprite;	//	アンチエイリアス結果 → バックバッファ
 	void antialias_pass();
 
@@ -334,28 +338,6 @@ public:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> smaa_area_shader_resource_view;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> smaa_search_shader_resource_view;
 	void smaa_pass();
-
-	//	TAA(Lighting-Sampleから移植)
-	struct taa_constants
-	{
-		UINT taa_reset = 1;								//	履歴リセット
-		UINT taa_history_display = 0;					//	デバッグ用 : ブレンド率表示
-		DirectX::XMFLOAT2 taa_jitter{ 0.0f, 0.0f };		//	現在フレームのジッター(UV)
-
-		DirectX::XMFLOAT2 taa_previous_jitter{ 0.0f, 0.0f };	//	前フレームのジッター(UV)
-		float taa_blend_min = 1.0f / 8.0f;				//	静止部分の現在フレーム混合率
-		float taa_blend_max = 1.0f / 4.0f;				//	動き/コントラストが大きい部分の現在フレーム混合率
-	};
-	bool taa_is_sub_pixel_jitter = true;
-	taa_constants taa_constant;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> taa_constant_buffer;
-	Microsoft::WRL::ComPtr<ID3D11ComputeShader> temporal_anti_alias_compute_shader;
-	int taa_frame_index = 0;
-	int taa_jitter_index = 0;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> taa_accumlate_shader_resource_view[2];
-	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> taa_accumlate_unordered_access_view[2];
-	void update_taa_jitter();
-	void taa_pass();
 
 public:
 	struct color_filter_constants

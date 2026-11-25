@@ -130,6 +130,9 @@
     <ClCompile Include="test_scene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="test2_scene_material_settings.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
     <ClCompile Include="compute_particle_system.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
@@ -348,9 +351,6 @@
       <Filter>Scenes</Filter>
     </FxCompile>
     <FxCompile Include="smaa_neighborhood_blending_ps.hlsl">
-      <Filter>Scenes</Filter>
-    </FxCompile>
-    <FxCompile Include="temporal_anti_alias_cs.hlsl">
       <Filter>Scenes</Filter>
     </FxCompile>
     <FxCompile Include="fxaa_ps.hlsl">

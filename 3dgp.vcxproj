@@ -191,6 +191,7 @@
     <ClCompile Include="implot\implot_items.cpp" />
     <ClCompile Include="test2_scene.cpp" />
     <ClCompile Include="test_scene.cpp" />
+    <ClCompile Include="test2_scene_material_settings.cpp" />
     <ClCompile Include="geometric_primitive.cpp" />
     <ClCompile Include="gltf_model.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
@@ -292,12 +293,6 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-    </FxCompile>
-    <FxCompile Include="temporal_anti_alias_cs.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
     </FxCompile>
     <FxCompile Include="fxaa_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>

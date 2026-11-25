@@ -128,6 +128,9 @@ public:
 	std::vector<material> materials;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> material_resource_view;
 
+	//	materials[].data を変更した後に呼び、GPU側のマテリアルバッファへ反映する
+	void update_material_resource(ID3D11DeviceContext* immediate_context);
+
 	struct texture
 	{
 		std::string name;

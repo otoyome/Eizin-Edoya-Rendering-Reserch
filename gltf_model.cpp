@@ -804,6 +804,23 @@ bool gltf_model::add_pipeline_state_for_instancing(ID3D11Device* device, pipelin
 	return true;
 }
 
+void gltf_model::update_material_resource(ID3D11DeviceContext* immediate_context)
+{
+	if (!material_resource_view || materials.empty())
+		return;
+
+	std::vector<material::cbuffer> material_data;
+	material_data.reserve(materials.size());
+	for (const material& material : materials)
+	{
+		material_data.emplace_back(material.data);
+	}
+
+	Microsoft::WRL::ComPtr<ID3D11Resource> material_buffer;
+	material_resource_view->GetResource(material_buffer.GetAddressOf());
+	immediate_context->UpdateSubresource(material_buffer.Get(), 0, 0, material_data.data(), 0, 0);
+}
+
 void gltf_model::fetch_materials(ID3D11Device* device, const tinygltf::Model& gltf_model)
 {
 	for (std::vector<tinygltf::Material>::const_reference gltf_material : gltf_model.materials)
