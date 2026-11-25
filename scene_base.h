@@ -84,6 +84,11 @@ public:
 	void set_camera_distance(float a) { distance = a; }
 	void set_camera_focus(const DirectX::XMFLOAT3& p) { camera_focus = p; }
 
+	//	TAA用のサブピクセルジッター(UV単位)。シーン定数のビュー射影行列に反映される
+	void set_jitter_uv_offset(const DirectX::XMFLOAT2& offset) { previous_jitter_uv_offset = current_jitter_uv_offset; current_jitter_uv_offset = offset; }
+	const DirectX::XMFLOAT2& get_current_jitter_uv_offset() const { return current_jitter_uv_offset; }
+	const DirectX::XMFLOAT2& get_previous_jitter_uv_offset() const { return previous_jitter_uv_offset; }
+
 	CONST HWND get_hwnd() const { return hwnd; }
 	render_data* get_renderdata() const { return renderdata; }
 
@@ -140,6 +145,8 @@ private:
 	DirectX::XMFLOAT4X4 projection;
 	DirectX::XMFLOAT4X4 view_projection;
 	DirectX::XMFLOAT4X4 previous_view_projection;
+	DirectX::XMFLOAT2 current_jitter_uv_offset{ 0.0f, 0.0f };
+	DirectX::XMFLOAT2 previous_jitter_uv_offset{ 0.0f, 0.0f };
 	float rotateX{ 0.0f };
 	float rotateY{ 0.0f };
 	float wheel{ 0 };

@@ -332,6 +332,27 @@
     <FxCompile Include="color_filter_ps.hlsl">
       <Filter>Scenes</Filter>
     </FxCompile>
+    <FxCompile Include="smaa_edge_detection_vs.hlsl">
+      <Filter>Scenes</Filter>
+    </FxCompile>
+    <FxCompile Include="smaa_edge_detection_ps.hlsl">
+      <Filter>Scenes</Filter>
+    </FxCompile>
+    <FxCompile Include="smaa_blending_weight_calculation_vs.hlsl">
+      <Filter>Scenes</Filter>
+    </FxCompile>
+    <FxCompile Include="smaa_blending_weight_calculation_ps.hlsl">
+      <Filter>Scenes</Filter>
+    </FxCompile>
+    <FxCompile Include="smaa_neighborhood_blending_vs.hlsl">
+      <Filter>Scenes</Filter>
+    </FxCompile>
+    <FxCompile Include="smaa_neighborhood_blending_ps.hlsl">
+      <Filter>Scenes</Filter>
+    </FxCompile>
+    <FxCompile Include="temporal_anti_alias_cs.hlsl">
+      <Filter>Scenes</Filter>
+    </FxCompile>
     <FxCompile Include="fxaa_ps.hlsl">
       <Filter>Scenes</Filter>
     </FxCompile>

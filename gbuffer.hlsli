@@ -11,8 +11,6 @@ static const uint shading_model_eizin       = 3;    //  シェーディング計算：鈴木
 //  G-Bufferステンシル
 static const uint g_buffer_stencil_indirect_lighting_off    = 1 <<  0;  //  間接光の処理を適応させない
 
-//  20バイト分はシステム的な予約領域(ただのサンプルにイルコレ？)
-
 static const uint g_buffer_stencil_filter_off               = 1 << 20;  //  フィルター効果の適応フラグ
 static const uint g_buffer_stencil_normal_depth_outline_off = 1 << 21;  //  深度/法線によるライン描画フラグ
 static const uint g_buffer_stencil_color_outline_off        = 1 << 22;  //  色によるライン描画フラグ

@@ -1,9 +1,9 @@
 #include "gltf_model.hlsli"
 #include "gbuffer.hlsli"
 
-//  G-Buffer output for glTF models (stages) rendered with the Eizin shading model.
-//  Material colors/textures come from glTF, the Eizin parameters come from EIZIN_GLTF_CONSTANT_BUFFER
-//  (one set per model, see test2_scene::eizin_gltf_constants).
+//  G-Buffer output for glTF models (stages such as Sponza) rendered with the Eizin shading model.
+//  Material colors/textures come from glTF. The Eizin parameters are stored per glTF material
+//  in eizin_materials (indexed by the glTF material index, see test2_scene::eizin_gltf_constants).
 
 // https://www.khronos.org/registry/glTF/specs/2.0/glTF-2.0.html#reference-textureinfo
 struct texture_info
@@ -58,28 +58,31 @@ Texture2D<float4> material_textures[5] : register(t1);
 #define ANISOTROPIC 2
 SamplerState sampler_states[3] : register(s0);
 
-cbuffer EIZIN_GLTF_CONSTANT_BUFFER : register(b6)
+//  Per glTF material Eizin parameters (layout must match test2_scene::eizin_gltf_constants)
+struct eizin_material_constants
 {
-    uint eizin_material_attribute;          //  Same bit flags as pmx_model::material_attribute
-    float eizin_shade_factor;               //  shade color = base color * shade factor
-    float2 eizin_dummy0;
-    float4 eizin_specular_color;            //  roughness, metalness, shading steps, noise factor
+    uint material_attribute;            //  Same bit flags as pmx_model::material_attribute
+    float shade_factor;                 //  shade color = base color * shade factor
+    float2 dummy0;
+    float4 specular_color;              //  roughness, metalness, shading steps, noise factor
 
-    float eizin_color_diff_line_factor;
-    float eizin_color_diff_line_threshold;
-    float eizin_color_line_adjust_saturate;
-    float eizin_color_line_adjust_brightness;
+    float color_diff_line_factor;
+    float color_diff_line_threshold;
+    float color_line_adjust_saturate;
+    float color_line_adjust_brightness;
 
-    float eizin_color_posterize_factor;
-    float eizin_depth_normal_outline_factor;
-    float2 eizin_dummy1;
+    float color_posterize_factor;
+    float depth_normal_outline_factor;
+    float2 dummy1;
 
-    float4 eizin_outline_adjust_parameter;  //  xy : color line fade range, zw : depth/normal line fade range
+    float4 outline_adjust_parameter;    //  xy : color line fade range, zw : depth/normal line fade range
 };
+StructuredBuffer<eizin_material_constants> eizin_materials : register(t20);
 
 PSGBufferOut main(VS_OUT pin, bool is_front_face : SV_IsFrontFace)
 {
     material_constants m = materials[material];
+    eizin_material_constants e = eizin_materials[max(material, 0)];
 
     //  Base color
     float4 base_color = m.pbr_metallic_roughness.basecolor_factor;
@@ -129,35 +132,35 @@ PSGBufferOut main(VS_OUT pin, bool is_front_face : SV_IsFrontFace)
     data.velocity = pin.velocity;
     data.shading_model = shading_model_eizin;
     data.emissive_color = 0;
-    data.roughness = eizin_specular_color.x;
-    data.metalness = eizin_specular_color.y;
-    data.occlusion_factor = eizin_specular_color.z / 255.0f;
-    data.occlusion_strength = eizin_specular_color.w;
-    data.shade_color = base_color.rgb * eizin_shade_factor;
+    data.roughness = e.specular_color.x;
+    data.metalness = e.specular_color.y;
+    data.occlusion_factor = e.specular_color.z / 255.0f;
+    data.occlusion_strength = e.specular_color.w;
+    data.shade_color = base_color.rgb * e.shade_factor;
     data.shadow_threshold = 1;
-    data.stencil = eizin_material_attribute;
+    data.stencil = e.material_attribute;
     data.shadow_mask = 0;
     data.mesh_direction = float4(1, 0, 0, 1);
 
     //  Color line
     {
         float2 pack_data;
-        pack_data.x = eizin_color_diff_line_factor;
-        pack_data.x *= saturate(smoothstep(eizin_outline_adjust_parameter.y, eizin_outline_adjust_parameter.x, pin.position.w));
-        pack_data.y = eizin_color_diff_line_threshold;
+        pack_data.x = e.color_diff_line_factor;
+        pack_data.x *= saturate(smoothstep(e.outline_adjust_parameter.y, e.outline_adjust_parameter.x, pin.position.w));
+        pack_data.y = e.color_diff_line_threshold;
         data.unique_parameter.x = PackFloat2ToFloat(pack_data);
 
-        pack_data.x = eizin_color_line_adjust_saturate;
-        pack_data.y = eizin_color_line_adjust_brightness;
+        pack_data.x = e.color_line_adjust_saturate;
+        pack_data.y = e.color_line_adjust_brightness;
         data.unique_parameter.y = PackFloat2ToFloat(pack_data);
     }
 
     //  Depth/normal line and posterize
     {
         float2 pack_data;
-        pack_data.x = eizin_depth_normal_outline_factor;
-        pack_data.x *= saturate(smoothstep(eizin_outline_adjust_parameter.w, eizin_outline_adjust_parameter.z, pin.position.w));
-        pack_data.y = eizin_color_posterize_factor / 255.0f;
+        pack_data.x = e.depth_normal_outline_factor;
+        pack_data.x *= saturate(smoothstep(e.outline_adjust_parameter.w, e.outline_adjust_parameter.z, pin.position.w));
+        pack_data.y = e.color_posterize_factor / 255.0f;
         data.unique_parameter.z = PackFloat2ToFloat(pack_data);
     }
     return EncodeGBuffer(data, view_projection_transform, z_buffer_parameteres);

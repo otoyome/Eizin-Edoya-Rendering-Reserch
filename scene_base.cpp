@@ -214,12 +214,17 @@ void scene_base::set_scene_constant(int start_slot, bool is_update_resource)
 		scene.viewport_rect.w = SCREEN_HEIGHT;
 		scene.view_transform = view;
 		scene.projection_transform = projection;
-		scene.view_projection_transform = view_projection;
+		//	TAA用ジッター : クリップ空間で平行移動させる(UVで +offset ずれる)
+		DirectX::XMMATRIX VP = DirectX::XMLoadFloat4x4(&view_projection);
+		VP *= DirectX::XMMatrixTranslation(2.0f * current_jitter_uv_offset.x, -2.0f * current_jitter_uv_offset.y, 0.0f);
+		DirectX::XMStoreFloat4x4(&scene.view_projection_transform, VP);
 		DirectX::XMStoreFloat4x4(&scene.inverse_view_transform, DirectX::XMMatrixInverse(nullptr, DirectX::XMLoadFloat4x4(&view)));
 		DirectX::XMStoreFloat4x4(&scene.inverse_projection_transform, DirectX::XMMatrixInverse(nullptr, DirectX::XMLoadFloat4x4(&projection)));
-		DirectX::XMStoreFloat4x4(&scene.inverse_view_projection_transform, DirectX::XMMatrixInverse(nullptr, DirectX::XMLoadFloat4x4(&view_projection)));
+		DirectX::XMStoreFloat4x4(&scene.inverse_view_projection_transform, DirectX::XMMatrixInverse(nullptr, VP));
 
-		scene.previous_view_projection_transform = previous_view_projection;
+		DirectX::XMMATRIX PreviousVP = DirectX::XMLoadFloat4x4(&previous_view_projection);
+		PreviousVP *= DirectX::XMMatrixTranslation(2.0f * previous_jitter_uv_offset.x, -2.0f * previous_jitter_uv_offset.y, 0.0f);
+		DirectX::XMStoreFloat4x4(&scene.previous_view_projection_transform, PreviousVP);
 
 		renderdata->immediate_context->UpdateSubresource(scene_constant_buffer.Get(), 0, 0, &scene, 0, 0);
 	}

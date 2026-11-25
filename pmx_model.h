@@ -75,7 +75,6 @@ public:
 	{
 		indirect_lighting_off		= 1 <<  0,	//	間接光の処理を適応させない
 
-		//	予約領域として20ビット占有しておく
 		filter_off					= 1 << 20,	//	フィルター効果の適応フラグ
 		normal_depth_outline_off	= 1 << 21,	//	深度/法線による法線描画フラグ
 		color_line_off				= 1 << 22,	//	色によるライン描画フラグ

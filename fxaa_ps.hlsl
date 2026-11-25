@@ -2,7 +2,7 @@
 
 //  FXAA (Fast Approximate Anti-Aliasing)
 //  Algorithm based on Timothy Lottes' FXAA 3.11 (quality preset).
-//  Input is the linear HDR scene color; luma is evaluated in a perceptual (sqrt) space.
+//  Input is the Eizin filter output (gamma-encoded LDR color), applied after the final pass.
 
 Texture2D scene_map : register(t0);
 SamplerState linear_clamp_sampler_state : register(s4);
@@ -20,7 +20,7 @@ static const float FXAA_SEARCH_STEP_SCALE[FXAA_SEARCH_STEPS] = { 1.0f, 1.0f, 1.0
 
 float fxaa_luma(float3 color)
 {
-    return sqrt(dot(saturate(color), float3(0.299f, 0.587f, 0.114f)));
+    return dot(saturate(color), float3(0.299f, 0.587f, 0.114f));
 }
 
 float fxaa_luma_at(float2 uv)

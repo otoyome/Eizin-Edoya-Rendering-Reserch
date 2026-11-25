@@ -34,7 +34,7 @@ void framework::scene_button_gui()
 #ifdef USE_IMGUI
 	if (ImGui::Begin("scene select"))
 	{
-		change_scene_button_gui<test2_scene>(u8"test2 scene");
+		//	test2_scene は再配布禁止モデルを使っているためシーン選択から除外する
 		change_scene_button_gui<test_scene>(u8"test scene");
 	}
 	ImGui::End();

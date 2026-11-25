@@ -2,6 +2,10 @@
 
 #include "implot/implot.h"
 
+//	SMAA用ルックアップテクスチャ
+#include "subpixel_morphological_anti_aliasing/Textures/AreaTex.h"
+#include "subpixel_morphological_anti_aliasing/Textures/SearchTex.h"
+
 //	
 #define	USE_EIZIN_SHADER
 
@@ -38,8 +42,33 @@ namespace
 	CONST char* gltf_gbuffer_shader_name = "eizin_gltf_generate_gbuffer";
 	CONST char* gltf_shadow_caster_shader_name = "gltf_shadow_caster";
 
-	//	glTFステージ用定数バッファのスロット
-	static constexpr int EizinGltfCBVIndex = 6;
+	//	glTFステージ用マテリアル毎英人パラメーターのスロット(eizin_gltf_gbuffer_ps.hlsl と合わせること)
+	static constexpr int EizinGltfMaterialSRVIndex = 20;
+
+	//	アンチエイリアス用の定数バッファスロット(各シェーダーと合わせること)
+	static constexpr int FxaaCBVIndex = 12;
+	static constexpr int SmaaCBVIndex = 13;
+	static constexpr int TaaCBVIndex = 3;
+
+	//	ハルトン数列によるサブピクセルジッター(-0.5～+0.5ピクセル)
+	DirectX::XMFLOAT2 calculate_halton_jitter(int frame_index)
+	{
+		static constexpr int jitter_sequence_length = 8;
+		auto halton = [](int index, int base)
+		{
+			float result = 0.0f;
+			float fraction = 1.0f / base;
+			while (index > 0)
+			{
+				result += (index % base) * fraction;
+				index /= base;
+				fraction /= base;
+			}
+			return result;
+		};
+		int index = (frame_index % jitter_sequence_length) + 1;
+		return { halton(index, 2) - 0.5f, halton(index, 3) - 0.5f };
+	}
 
 	CONST LONG SHADOWMAP_WIDTH{ 4096 };
 	CONST LONG SHADOWMAP_HEIGHT{ 4096 };
@@ -148,10 +177,16 @@ bool test2_scene::initialize_core()
 			hr = get_renderdata()->device->CreateBuffer(&buffer_desc, nullptr, fxaa_constant_buffer.GetAddressOf());
 			_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 		}
-		//	glTFステージ用定数バッファ
+		//	SMAA用定数バッファ
 		{
-			buffer_desc.ByteWidth = sizeof(eizin_gltf_constants);
-			hr = get_renderdata()->device->CreateBuffer(&buffer_desc, nullptr, eizin_gltf_constant_buffer.GetAddressOf());
+			buffer_desc.ByteWidth = sizeof(smaa_constants);
+			hr = get_renderdata()->device->CreateBuffer(&buffer_desc, nullptr, smaa_constant_buffer.GetAddressOf());
+			_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+		}
+		//	TAA用定数バッファ
+		{
+			buffer_desc.ByteWidth = sizeof(taa_constants);
+			hr = get_renderdata()->device->CreateBuffer(&buffer_desc, nullptr, taa_constant_buffer.GetAddressOf());
 			_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 		}
 	}
@@ -305,15 +340,96 @@ bool test2_scene::initialize_core()
 		hr = get_renderdata()->device->CreateUnorderedAccessView(color_buffer.Get(), NULL, scene_unordered_access_view.GetAddressOf());
 		_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
-		//	FXAA出力先(シーンカラーと同じ形式)
-		texture2d_desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-		Microsoft::WRL::ComPtr<ID3D11Texture2D> fxaa_buffer{};
-		hr = get_renderdata()->device->CreateTexture2D(&texture2d_desc, NULL, fxaa_buffer.GetAddressOf());
-		_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-		hr = get_renderdata()->device->CreateRenderTargetView(fxaa_buffer.Get(), NULL, fxaa_render_target_view.GetAddressOf());
-		_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-		hr = get_renderdata()->device->CreateShaderResourceView(fxaa_buffer.Get(), NULL, fxaa_shader_resource_view.GetAddressOf());
-		_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+		//	鈴木英人フィルター出力先(アンチエイリアスの入力。ガンマ補正済みの色が入る)
+		{
+			D3D11_TEXTURE2D_DESC filtered_desc = texture2d_desc;
+			filtered_desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+			Microsoft::WRL::ComPtr<ID3D11Texture2D> filtered_buffer{};
+			hr = get_renderdata()->device->CreateTexture2D(&filtered_desc, NULL, filtered_buffer.GetAddressOf());
+			_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+			hr = get_renderdata()->device->CreateRenderTargetView(filtered_buffer.Get(), NULL, filtered_render_target_view.GetAddressOf());
+			_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+			hr = get_renderdata()->device->CreateShaderResourceView(filtered_buffer.Get(), NULL, filtered_shader_resource_view.GetAddressOf());
+			_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+		}
+
+		//	アンチエイリアス出力先(シーンカラーと同じ形式。TAAはUAVで書き込む)
+		{
+			Microsoft::WRL::ComPtr<ID3D11Texture2D> antialias_buffer{};
+			hr = get_renderdata()->device->CreateTexture2D(&texture2d_desc, NULL, antialias_buffer.GetAddressOf());
+			_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+			hr = get_renderdata()->device->CreateRenderTargetView(antialias_buffer.Get(), NULL, antialias_render_target_view.GetAddressOf());
+			_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+			hr = get_renderdata()->device->CreateShaderResourceView(antialias_buffer.Get(), NULL, antialias_shader_resource_view.GetAddressOf());
+			_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+			hr = get_renderdata()->device->CreateUnorderedAccessView(antialias_buffer.Get(), NULL, antialias_unordered_access_view.GetAddressOf());
+			_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+		}
+
+		//	TAA履歴バッファ(2枚を交互に使う)
+		for (int index = 0; index < 2; ++index)
+		{
+			D3D11_TEXTURE2D_DESC history_desc = texture2d_desc;
+			history_desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
+			Microsoft::WRL::ComPtr<ID3D11Texture2D> history_buffer{};
+			hr = get_renderdata()->device->CreateTexture2D(&history_desc, NULL, history_buffer.GetAddressOf());
+			_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+			hr = get_renderdata()->device->CreateShaderResourceView(history_buffer.Get(), NULL, taa_accumlate_shader_resource_view[index].GetAddressOf());
+			_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+			hr = get_renderdata()->device->CreateUnorderedAccessView(history_buffer.Get(), NULL, taa_accumlate_unordered_access_view[index].GetAddressOf());
+			_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+		}
+
+		//	SMAA用バッファ(エッジ : R8G8, ブレンド係数 : R8G8B8A8)
+		{
+			D3D11_TEXTURE2D_DESC smaa_desc = texture2d_desc;
+			smaa_desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+			DXGI_FORMAT formats[smaa_buffer_max] = { DXGI_FORMAT_R8G8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM };
+			for (int index = 0; index < smaa_buffer_max; ++index)
+			{
+				smaa_desc.Format = formats[index];
+				Microsoft::WRL::ComPtr<ID3D11Texture2D> smaa_buffer{};
+				hr = get_renderdata()->device->CreateTexture2D(&smaa_desc, NULL, smaa_buffer.GetAddressOf());
+				_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+				hr = get_renderdata()->device->CreateRenderTargetView(smaa_buffer.Get(), NULL, smaa_buffer_render_target_view[index].GetAddressOf());
+				_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+				hr = get_renderdata()->device->CreateShaderResourceView(smaa_buffer.Get(), NULL, smaa_buffer_shader_resource_view[index].GetAddressOf());
+				_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+			}
+		}
+
+		//	SMAA用ルックアップテクスチャ(Area / Search)
+		{
+			D3D11_TEXTURE2D_DESC lookup_desc{};
+			lookup_desc.MipLevels = 1;
+			lookup_desc.ArraySize = 1;
+			lookup_desc.SampleDesc.Count = 1;
+			lookup_desc.Usage = D3D11_USAGE_IMMUTABLE;
+			lookup_desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+
+			Microsoft::WRL::ComPtr<ID3D11Texture2D> lookup_texture{};
+			D3D11_SUBRESOURCE_DATA initialize_data{};
+
+			lookup_desc.Width = AREATEX_WIDTH;
+			lookup_desc.Height = AREATEX_HEIGHT;
+			lookup_desc.Format = DXGI_FORMAT_R8G8_UNORM;
+			initialize_data.pSysMem = areaTexBytes;
+			initialize_data.SysMemPitch = AREATEX_PITCH;
+			hr = get_renderdata()->device->CreateTexture2D(&lookup_desc, &initialize_data, lookup_texture.ReleaseAndGetAddressOf());
+			_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+			hr = get_renderdata()->device->CreateShaderResourceView(lookup_texture.Get(), NULL, smaa_area_shader_resource_view.GetAddressOf());
+			_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
+			lookup_desc.Width = SEARCHTEX_WIDTH;
+			lookup_desc.Height = SEARCHTEX_HEIGHT;
+			lookup_desc.Format = DXGI_FORMAT_R8_UNORM;
+			initialize_data.pSysMem = searchTexBytes;
+			initialize_data.SysMemPitch = SEARCHTEX_PITCH;
+			hr = get_renderdata()->device->CreateTexture2D(&lookup_desc, &initialize_data, lookup_texture.ReleaseAndGetAddressOf());
+			_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+			hr = get_renderdata()->device->CreateShaderResourceView(lookup_texture.Get(), NULL, smaa_search_shader_resource_view.GetAddressOf());
+			_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+		}
 	}
 
 	//	描画範囲制限用モデル準備
@@ -397,6 +513,17 @@ bool test2_scene::initialize_core()
 
 		//	FXAA
 		create_ps_from_cso(get_renderdata()->device.Get(), "fxaa_ps.cso", fxaa_pixel_shader.GetAddressOf());
+
+		//	SMAA(頂点はSV_VertexIDから生成するので入力レイアウトなし)
+		create_vs_from_cso(get_renderdata()->device.Get(), "smaa_edge_detection_vs.cso", smaa_edge_detection_vertex_shader.GetAddressOf(), nullptr, nullptr, 0);
+		create_ps_from_cso(get_renderdata()->device.Get(), "smaa_edge_detection_ps.cso", smaa_edge_detection_pixel_shader.GetAddressOf());
+		create_vs_from_cso(get_renderdata()->device.Get(), "smaa_blending_weight_calculation_vs.cso", smaa_blending_weight_calculation_vertex_shader.GetAddressOf(), nullptr, nullptr, 0);
+		create_ps_from_cso(get_renderdata()->device.Get(), "smaa_blending_weight_calculation_ps.cso", smaa_blending_weight_calculation_pixel_shader.GetAddressOf());
+		create_vs_from_cso(get_renderdata()->device.Get(), "smaa_neighborhood_blending_vs.cso", smaa_neighborhood_blending_vertex_shader.GetAddressOf(), nullptr, nullptr, 0);
+		create_ps_from_cso(get_renderdata()->device.Get(), "smaa_neighborhood_blending_ps.cso", smaa_neighborhood_blending_pixel_shader.GetAddressOf());
+
+		//	TAA
+		create_cs_from_cso(get_renderdata()->device.Get(), "temporal_anti_alias_cs.cso", temporal_anti_alias_compute_shader.GetAddressOf());
 	}
 
 	//	シーンの初期化処理
@@ -761,8 +888,10 @@ void test2_scene::initialize_stage_models()
 	}
 }
 
-test2_scene::gltf_stage& test2_scene::add_gltf_stage(const char* filename)
+test2_scene::gltf_stage& test2_scene::add_gltf_stage(const char* filename, const eizin_gltf_constants& default_constants)
 {
+	HRESULT hr{ S_OK };
+
 	gltf_stage& stage = gltf_stages.emplace_back();
 	stage.model = std::make_unique<gltf_model>(get_renderdata()->device.Get(), filename);
 
@@ -786,6 +915,29 @@ test2_scene::gltf_stage& test2_scene::add_gltf_stage(const char* filename)
 #endif	//	defined(USE_EIZIN_SHADER)
 		stage.model->add_pipeline_state(get_renderdata()->device.Get(), desc);
 	}
+
+	//	マテリアル毎の英人パラメーター(StructuredBuffer)
+	{
+		stage.material_constants.assign((std::max)(stage.model->materials.size(), static_cast<size_t>(1)), default_constants);
+
+		D3D11_BUFFER_DESC buffer_desc{};
+		buffer_desc.ByteWidth = static_cast<UINT>(sizeof(eizin_gltf_constants) * stage.material_constants.size());
+		buffer_desc.Usage = D3D11_USAGE_DEFAULT;
+		buffer_desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		buffer_desc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+		buffer_desc.StructureByteStride = sizeof(eizin_gltf_constants);
+		D3D11_SUBRESOURCE_DATA initialize_data{};
+		initialize_data.pSysMem = stage.material_constants.data();
+		hr = get_renderdata()->device->CreateBuffer(&buffer_desc, &initialize_data, stage.material_constant_buffer.GetAddressOf());
+		_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
+		D3D11_SHADER_RESOURCE_VIEW_DESC shader_resource_view_desc{};
+		shader_resource_view_desc.Format = DXGI_FORMAT_UNKNOWN;
+		shader_resource_view_desc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+		shader_resource_view_desc.Buffer.NumElements = static_cast<UINT>(stage.material_constants.size());
+		hr = get_renderdata()->device->CreateShaderResourceView(stage.material_constant_buffer.Get(), &shader_resource_view_desc, stage.material_constant_shader_resource_view.GetAddressOf());
+		_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+	}
 	return stage;
 }
 
@@ -798,10 +950,15 @@ void test2_scene::render_gltf_stages_gbuffer()
 			model_constants constant{};
 			get_renderdata()->immediate_context->UpdateSubresource(model_constant_constant_buffer.Get(), 0, 0, &constant, 0, 0);
 		}
-		get_renderdata()->immediate_context->UpdateSubresource(eizin_gltf_constant_buffer.Get(), 0, 0, &stage.constants, 0, 0);
-		get_renderdata()->immediate_context->PSSetConstantBuffers(EizinGltfCBVIndex, 1, eizin_gltf_constant_buffer.GetAddressOf());
+
+		//	マテリアル毎の英人パラメーター(ImGuiで編集されるので毎フレーム更新)
+		get_renderdata()->immediate_context->UpdateSubresource(stage.material_constant_buffer.Get(), 0, 0, stage.material_constants.data(), 0, 0);
+		get_renderdata()->immediate_context->PSSetShaderResources(EizinGltfMaterialSRVIndex, 1, stage.material_constant_shader_resource_view.GetAddressOf());
 
 		stage.model->render(get_renderdata()->immediate_context.Get(), stage.world_matrix, stage.previous_world_matrix, gltf_gbuffer_shader_name);
+
+		ID3D11ShaderResourceView* null_shader_resource_view = nullptr;
+		get_renderdata()->immediate_context->PSSetShaderResources(EizinGltfMaterialSRVIndex, 1, &null_shader_resource_view);
 	}
 }
 
@@ -819,9 +976,48 @@ void test2_scene::render_gltf_stages_shadow(UINT light_shadow_mask)
 	}
 }
 
+void test2_scene::update_taa_jitter()
+{
+	//	TAA以外ではジッターしない
+	DirectX::XMFLOAT2 jitter_uv{ 0.0f, 0.0f };
+	if (antialias == antialias_mode::taa && taa_is_sub_pixel_jitter)
+	{
+		DirectX::XMFLOAT2 jitter_pixel = calculate_halton_jitter(taa_jitter_index++);
+		jitter_uv.x = jitter_pixel.x / static_cast<float>(SCREEN_WIDTH);
+		jitter_uv.y = jitter_pixel.y / static_cast<float>(SCREEN_HEIGHT);
+	}
+	set_jitter_uv_offset(jitter_uv);
+}
+
+void test2_scene::antialias_pass()
+{
+	switch (antialias)
+	{
+	case antialias_mode::fxaa:
+		fxaa_pass();
+		break;
+	case antialias_mode::smaa:
+		smaa_pass();
+		break;
+	case antialias_mode::taa:
+		taa_pass();
+		break;
+	default:
+		break;
+	}
+
+	//	次のパスでSRVとして使うので外す
+	get_renderdata()->immediate_context->OMSetRenderTargets(0, nullptr, nullptr);
+	ID3D11UnorderedAccessView* null_unordered_access_views[2] = {};
+	get_renderdata()->immediate_context->CSSetUnorderedAccessViews(0, 2, null_unordered_access_views, nullptr);
+	ID3D11ShaderResourceView* null_shader_resource_views[4] = {};
+	get_renderdata()->immediate_context->PSSetShaderResources(0, 4, null_shader_resource_views);
+	get_renderdata()->immediate_context->CSSetShaderResources(0, 4, null_shader_resource_views);
+}
+
 void test2_scene::fxaa_pass()
 {
-	get_renderdata()->immediate_context->OMSetRenderTargets(1, fxaa_render_target_view.GetAddressOf(), nullptr);
+	get_renderdata()->immediate_context->OMSetRenderTargets(1, antialias_render_target_view.GetAddressOf(), nullptr);
 
 	get_renderdata()->set_default_sampler();
 	get_renderdata()->immediate_context->OMSetBlendState(get_renderdata()->blend_states[static_cast<size_t>(render_data::BLEND_STATE::NONE)].Get(), nullptr, 0xFFFFFFFF);
@@ -830,12 +1026,131 @@ void test2_scene::fxaa_pass()
 	get_renderdata()->immediate_context->VSSetShader(sprite_vertex_shader.Get(), nullptr, 0);
 	get_renderdata()->immediate_context->IASetInputLayout(sprite_input_layout.Get());
 	get_renderdata()->immediate_context->UpdateSubresource(fxaa_constant_buffer.Get(), 0, 0, &fxaa_constant, 0, 0);
-	get_renderdata()->immediate_context->PSSetConstantBuffers(12, 1, fxaa_constant_buffer.GetAddressOf());
+	get_renderdata()->immediate_context->PSSetConstantBuffers(FxaaCBVIndex, 1, fxaa_constant_buffer.GetAddressOf());
 	get_renderdata()->immediate_context->PSSetShader(fxaa_pixel_shader.Get(), nullptr, 0);
 	fxaa_render_sprite->render(get_renderdata()->immediate_context.Get(), 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+}
 
-	//	次のパスでSRVとして使うので外す
-	get_renderdata()->immediate_context->OMSetRenderTargets(0, nullptr, nullptr);
+void test2_scene::smaa_pass()
+{
+	static constexpr int SceneCBVIndex = 1;
+	auto* immediate_context = get_renderdata()->immediate_context.Get();
+
+	//	共通設定
+	set_scene_constant(SceneCBVIndex, false);
+	immediate_context->UpdateSubresource(smaa_constant_buffer.Get(), 0, 0, &smaa_constant, 0, 0);
+	immediate_context->VSSetConstantBuffers(SmaaCBVIndex, 1, smaa_constant_buffer.GetAddressOf());
+	immediate_context->PSSetConstantBuffers(SmaaCBVIndex, 1, smaa_constant_buffer.GetAddressOf());
+
+	ID3D11SamplerState* sampler_states[] =
+	{
+		get_renderdata()->sampler_states[static_cast<size_t>(render_data::SAMPLER_STATE::POINT_CLAMP)].Get(),
+		get_renderdata()->sampler_states[static_cast<size_t>(render_data::SAMPLER_STATE::LINEAR_CLAMP)].Get(),
+	};
+	immediate_context->PSSetSamplers(0, ARRAYSIZE(sampler_states), sampler_states);
+
+	immediate_context->OMSetBlendState(get_renderdata()->blend_states[static_cast<size_t>(render_data::BLEND_STATE::NONE)].Get(), nullptr, 0xFFFFFFFF);
+	immediate_context->OMSetDepthStencilState(get_renderdata()->depth_stencil_states[static_cast<size_t>(render_data::DEPTH_STATE::ZT_OFF_ZW_OFF)].Get(), 0);
+	immediate_context->RSSetState(get_renderdata()->rasterizer_states[static_cast<size_t>(render_data::RASTER_STATE::CULL_NONE)].Get());
+	immediate_context->IASetInputLayout(nullptr);
+	immediate_context->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
+	immediate_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+
+	FLOAT clear_color[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	ID3D11ShaderResourceView* null_shader_resource_views[3] = {};
+
+	//	エッジ検出
+	{
+		immediate_context->ClearRenderTargetView(smaa_buffer_render_target_view[smaa_edge].Get(), clear_color);
+		immediate_context->OMSetRenderTargets(1, smaa_buffer_render_target_view[smaa_edge].GetAddressOf(), nullptr);
+		immediate_context->VSSetShader(smaa_edge_detection_vertex_shader.Get(), nullptr, 0);
+		immediate_context->PSSetShader(smaa_edge_detection_pixel_shader.Get(), nullptr, 0);
+		immediate_context->PSSetShaderResources(0, 1, filtered_shader_resource_view.GetAddressOf());
+		immediate_context->Draw(4, 0);
+		immediate_context->PSSetShaderResources(0, 3, null_shader_resource_views);
+	}
+
+	//	ブレンド係数計算
+	{
+		immediate_context->ClearRenderTargetView(smaa_buffer_render_target_view[smaa_blend].Get(), clear_color);
+		immediate_context->OMSetRenderTargets(1, smaa_buffer_render_target_view[smaa_blend].GetAddressOf(), nullptr);
+		immediate_context->VSSetShader(smaa_blending_weight_calculation_vertex_shader.Get(), nullptr, 0);
+		immediate_context->PSSetShader(smaa_blending_weight_calculation_pixel_shader.Get(), nullptr, 0);
+		ID3D11ShaderResourceView* shader_resource_views[] =
+		{
+			smaa_buffer_shader_resource_view[smaa_edge].Get(),
+			smaa_area_shader_resource_view.Get(),
+			smaa_search_shader_resource_view.Get(),
+		};
+		immediate_context->PSSetShaderResources(0, ARRAYSIZE(shader_resource_views), shader_resource_views);
+		immediate_context->Draw(4, 0);
+		immediate_context->PSSetShaderResources(0, 3, null_shader_resource_views);
+	}
+
+	//	近傍ブレンド
+	{
+		immediate_context->OMSetRenderTargets(1, antialias_render_target_view.GetAddressOf(), nullptr);
+		immediate_context->VSSetShader(smaa_neighborhood_blending_vertex_shader.Get(), nullptr, 0);
+		immediate_context->PSSetShader(smaa_neighborhood_blending_pixel_shader.Get(), nullptr, 0);
+		ID3D11ShaderResourceView* shader_resource_views[] =
+		{
+			filtered_shader_resource_view.Get(),
+			smaa_buffer_shader_resource_view[smaa_blend].Get(),
+			smaa_buffer_shader_resource_view[smaa_edge].Get(),
+		};
+		immediate_context->PSSetShaderResources(0, ARRAYSIZE(shader_resource_views), shader_resource_views);
+		immediate_context->Draw(4, 0);
+		immediate_context->PSSetShaderResources(0, 3, null_shader_resource_views);
+	}
+
+	//	デフォルトのサンプラーに戻す
+	get_renderdata()->set_default_sampler();
+}
+
+void test2_scene::taa_pass()
+{
+	auto* immediate_context = get_renderdata()->immediate_context.Get();
+
+	//	定数バッファ更新
+	taa_constant.taa_jitter = get_current_jitter_uv_offset();
+	taa_constant.taa_previous_jitter = get_previous_jitter_uv_offset();
+	immediate_context->UpdateSubresource(taa_constant_buffer.Get(), 0, 0, &taa_constant, 0, 0);
+	taa_constant.taa_reset = 0;
+	immediate_context->CSSetConstantBuffers(TaaCBVIndex, 1, taa_constant_buffer.GetAddressOf());
+
+	const int current_buffer_index = (taa_frame_index + 0) % 2;
+	const int previous_buffer_index = (taa_frame_index + 1) % 2;
+	++taa_frame_index;
+
+	immediate_context->OMSetRenderTargets(0, nullptr, nullptr);
+
+	ID3D11ShaderResourceView* shader_resource_views[] =
+	{
+		filtered_shader_resource_view.Get(),
+		taa_accumlate_shader_resource_view[previous_buffer_index].Get(),
+		g_buffer_shader_resource_view[GB_Velocity].Get(),
+		g_buffer_shader_resource_view[GB_Normal_Depth].Get(),
+	};
+	immediate_context->CSSetShaderResources(0, ARRAYSIZE(shader_resource_views), shader_resource_views);
+
+	ID3D11SamplerState* sampler_states[] =
+	{
+		get_renderdata()->sampler_states[static_cast<size_t>(render_data::SAMPLER_STATE::POINT_CLAMP)].Get(),
+		get_renderdata()->sampler_states[static_cast<size_t>(render_data::SAMPLER_STATE::LINEAR_CLAMP)].Get(),
+	};
+	immediate_context->CSSetSamplers(0, ARRAYSIZE(sampler_states), sampler_states);
+
+	ID3D11UnorderedAccessView* unordered_access_views[] =
+	{
+		antialias_unordered_access_view.Get(),
+		taa_accumlate_unordered_access_view[current_buffer_index].Get(),
+	};
+	immediate_context->CSSetUnorderedAccessViews(0, ARRAYSIZE(unordered_access_views), unordered_access_views, nullptr);
+
+	immediate_context->CSSetShader(temporal_anti_alias_compute_shader.Get(), nullptr, 0);
+	static constexpr UINT thread_group_size = 8;
+	immediate_context->Dispatch((SCREEN_WIDTH + thread_group_size - 1) / thread_group_size, (SCREEN_HEIGHT + thread_group_size - 1) / thread_group_size, 1);
+	immediate_context->CSSetShader(nullptr, nullptr, 0);
 }
 
 void test2_scene::initialize_scene()
@@ -969,8 +1284,8 @@ void test2_scene::initialize_scene()
 	{
 		deferred_rendering_sprite = std::make_unique<sprite>(get_renderdata()->device.Get(), g_buffer_shader_resource_view[GB_BaseColor]);
 		final_pass_render_sprite = std::make_unique<sprite>(get_renderdata()->device.Get(), scene_shader_resource_view);
-		fxaa_render_sprite = std::make_unique<sprite>(get_renderdata()->device.Get(), scene_shader_resource_view);
-		final_pass_fxaa_render_sprite = std::make_unique<sprite>(get_renderdata()->device.Get(), fxaa_shader_resource_view);
+		fxaa_render_sprite = std::make_unique<sprite>(get_renderdata()->device.Get(), filtered_shader_resource_view);
+		final_pass_antialias_render_sprite = std::make_unique<sprite>(get_renderdata()->device.Get(), antialias_shader_resource_view);
 	}
 
 	//	モデルシェーダー準備
@@ -1032,14 +1347,48 @@ void test2_scene::imgui_render_core()
 			ImGui::Separator();
 		}
 
-		//	FXAA
+		//	アンチエイリアス(ファイナルパスの後に適応)
 		{
-			ImGui::Checkbox("fxaa", &use_fxaa);
-			if (use_fxaa)
+			const char* antialias_names[] = { "none", "fxaa", "smaa", "taa" };
+			int antialias_index = static_cast<int>(antialias);
+			if (ImGui::Combo("antialias", &antialias_index, antialias_names, IM_ARRAYSIZE(antialias_names)))
 			{
+				antialias = static_cast<antialias_mode>(antialias_index);
+				taa_constant.taa_reset = 1;
+			}
+			switch (antialias)
+			{
+			case antialias_mode::fxaa:
 				ImGui::SliderFloat("fxaa_subpixel_quality", &fxaa_constant.subpixel_quality, 0.0f, 1.0f);
 				ImGui::SliderFloat("fxaa_edge_threshold", &fxaa_constant.edge_threshold, 0.063f, 0.333f);
 				ImGui::SliderFloat("fxaa_edge_threshold_min", &fxaa_constant.edge_threshold_min, 0.0f, 0.0833f);
+				break;
+			case antialias_mode::smaa:
+			{
+				ImGui::Checkbox("smaa_draw_edge", reinterpret_cast<bool*>(&smaa_constant.smaa_draw_edge));
+				ImGui::SliderFloat("smaa_threshold", &smaa_constant.smaa_threshold, 0.0f, 0.5f);
+				int max_search_steps = static_cast<int>(smaa_constant.smaa_max_search_steps);
+				int max_search_steps_diagonal = static_cast<int>(smaa_constant.smaa_max_search_steps_diagonal);
+				int corner_rounding = static_cast<int>(smaa_constant.smaa_corner_rounding);
+				ImGui::SliderInt("smaa_max_search_steps", &max_search_steps, 0, 112);
+				ImGui::SliderInt("smaa_max_search_steps_diagonal", &max_search_steps_diagonal, 0, 20);
+				ImGui::SliderInt("smaa_corner_rounding", &corner_rounding, 0, 100);
+				ImGui::SliderFloat("smaa_local_contrast_adaptation_factor", &smaa_constant.smaa_local_contrast_adaptation_factor, 0.0f, 5.0f);
+				smaa_constant.smaa_max_search_steps = static_cast<UINT>(max_search_steps);
+				smaa_constant.smaa_max_search_steps_diagonal = static_cast<UINT>(max_search_steps_diagonal);
+				smaa_constant.smaa_corner_rounding = static_cast<UINT>(corner_rounding);
+				break;
+			}
+			case antialias_mode::taa:
+				if (ImGui::Button("taa_reset"))
+					taa_constant.taa_reset = 1;
+				ImGui::Checkbox("taa_sub_pixel_jitter", &taa_is_sub_pixel_jitter);
+				ImGui::Checkbox("taa_history_display", reinterpret_cast<bool*>(&taa_constant.taa_history_display));
+				ImGui::SliderFloat("taa_blend_min", &taa_constant.taa_blend_min, 0.01f, 1.0f);
+				ImGui::SliderFloat("taa_blend_max", &taa_constant.taa_blend_max, 0.01f, 1.0f);
+				break;
+			default:
+				break;
 			}
 			ImGui::Separator();
 		}
@@ -1058,20 +1407,57 @@ void test2_scene::imgui_render_core()
 					ImGui::DragFloat3("translation", &stage.translation.x, 0.1f);
 					ImGui::Checkbox("cast_shadow", &stage.cast_shadow);
 
-					auto& c = stage.constants;
-					ImGui::DragFloat("shade_factor", &c.shade_factor, 0.01f, 0.0f, 1.0f);
-					ImGui::DragFloat("roughness", &c.specular_color.x, 0.01f);
-					ImGui::DragFloat("metalness", &c.specular_color.y, 0.01f);
-					ImGui::DragFloat("shading_steps", &c.specular_color.z, 0.1f);
-					ImGui::DragFloat("noise_factor", &c.specular_color.w, 0.01f);
-					ImGui::DragFloat("color_diff_line_factor", &c.color_diff_line_factor, 0.01f);
-					ImGui::DragFloat("color_diff_line_threshold", &c.color_diff_line_threshold, 0.0001f, 0.0f, 1.0f, "%.5f");
-					ImGui::DragFloat("color_line_adjust_saturate", &c.color_line_adjust_saturate, 0.01f);
-					ImGui::DragFloat("color_line_adjust_brightness", &c.color_line_adjust_brightness, 0.01f);
-					ImGui::DragFloat2("color_line_range", &c.outline_adjust_parameter.x);
-					ImGui::DragFloat("depth_normal_outline_factor", &c.depth_normal_outline_factor, 0.001f);
-					ImGui::DragFloat2("depth_normal_outline_range", &c.outline_adjust_parameter.z);
-					ImGui::DragFloat("color_posterize_factor", &c.color_posterize_factor, 0.1f);
+					//	マテリアル毎の英人パラメーター(名前が無いのでベースカラーテクスチャで判別する)
+					for (std::size_t m = 0; m < stage.material_constants.size(); ++m)
+					{
+						ImGui::PushID(static_cast<int>(m));
+						ID3D11ShaderResourceView* thumbnail = nullptr;
+						if (m < stage.model->materials.size())
+						{
+							int texture_index = stage.model->materials[m].data.pbr_metallic_roughness.basecolor_texture.index;
+							if (texture_index > -1)
+								thumbnail = stage.model->texture_resource_views.at(stage.model->textures.at(texture_index).source).Get();
+						}
+						if (thumbnail)
+						{
+							ImGui::Image(thumbnail, { 32, 32 });
+							ImGui::SameLine();
+						}
+						if (ImGui::TreeNode((std::string("material") + std::to_string(m)).data()))
+						{
+							auto& c = stage.material_constants[m];
+							bool noise_off = (c.material_attribute & pmx_model::material_attribute::noise_off) != 0;
+							bool color_line_off = (c.material_attribute & pmx_model::material_attribute::color_line_off) != 0;
+							bool normal_depth_outline_off = (c.material_attribute & pmx_model::material_attribute::normal_depth_outline_off) != 0;
+							bool color_postarize_off = (c.material_attribute & pmx_model::material_attribute::color_postarize_off) != 0;
+							bool filter_off = (c.material_attribute & pmx_model::material_attribute::filter_off) != 0;
+							ImGui::Checkbox("noise_off", &noise_off);
+							ImGui::Checkbox("color_line_off", &color_line_off);
+							ImGui::Checkbox("normal_depth_outline_off", &normal_depth_outline_off);
+							ImGui::Checkbox("color_postarize_off", &color_postarize_off);
+							ImGui::Checkbox("filter_off", &filter_off);
+							auto set_flag = [&c](UINT flag, bool on) { c.material_attribute = on ? (c.material_attribute | flag) : (c.material_attribute & ~flag); };
+							set_flag(pmx_model::material_attribute::noise_off, noise_off);
+							set_flag(pmx_model::material_attribute::color_line_off, color_line_off);
+							set_flag(pmx_model::material_attribute::normal_depth_outline_off, normal_depth_outline_off);
+							set_flag(pmx_model::material_attribute::color_postarize_off, color_postarize_off);
+							set_flag(pmx_model::material_attribute::filter_off, filter_off);
+
+							ImGui::DragFloat("shade_factor", &c.shade_factor, 0.01f, 0.0f, 1.0f);
+							ImGui::DragFloat("shading_steps", &c.specular_color.z, 0.1f);
+							ImGui::DragFloat("noise_factor", &c.specular_color.w, 0.01f);
+							ImGui::DragFloat("color_diff_line_factor", &c.color_diff_line_factor, 0.01f);
+							ImGui::DragFloat("color_diff_line_threshold", &c.color_diff_line_threshold, 0.0001f, 0.0f, 1.0f, "%.5f");
+							ImGui::DragFloat("color_line_adjust_saturate", &c.color_line_adjust_saturate, 0.01f);
+							ImGui::DragFloat("color_line_adjust_brightness", &c.color_line_adjust_brightness, 0.01f);
+							ImGui::DragFloat2("color_line_range", &c.outline_adjust_parameter.x);
+							ImGui::DragFloat("depth_normal_outline_factor", &c.depth_normal_outline_factor, 0.001f);
+							ImGui::DragFloat2("depth_normal_outline_range", &c.outline_adjust_parameter.z);
+							ImGui::DragFloat("color_posterize_factor", &c.color_posterize_factor, 0.1f);
+							ImGui::TreePop();
+						}
+						ImGui::PopID();
+					}
 					ImGui::TreePop();
 				}
 				ImGui::PopID();
@@ -1356,6 +1742,9 @@ void test2_scene::update_core(float elapsed_time)
 
 void test2_scene::render_core(float elapsed_time)
 {
+	//	TAA用サブピクセルジッター更新(シーン定数のビュー射影行列に反映される)
+	update_taa_jitter();
+
 	//	GBuffer生成
 	generate_gbuffer_pass(elapsed_time);
 
@@ -1999,19 +2388,18 @@ void test2_scene::shadow_light_pass(float elapsed_time)
 
 void test2_scene::final_pass(float elapsed_time)
 {
-	//	鈴木英人フィルターの前にFXAAをかける
-	if (use_fxaa)
-		fxaa_pass();
+	const bool use_antialias = antialias != antialias_mode::none;
 
-	//	出力先をバックバッファに変更
+	//	出力先を変更(アンチエイリアスを使う場合は中間バッファ、使わない場合はバックバッファ)
 	{
 		FLOAT clear_color[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-		get_renderdata()->immediate_context->ClearRenderTargetView(get_renderdata()->render_target_view.Get(), clear_color);
+		ID3D11RenderTargetView* render_target_view = use_antialias ? filtered_render_target_view.Get() : get_renderdata()->render_target_view.Get();
+		get_renderdata()->immediate_context->ClearRenderTargetView(render_target_view, clear_color);
 //		get_renderdata()->immediate_context->ClearDepthStencilView(get_renderdata()->depth_stencil_view.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-		get_renderdata()->immediate_context->OMSetRenderTargets(1, get_renderdata()->render_target_view.GetAddressOf(), nullptr);
+		get_renderdata()->immediate_context->OMSetRenderTargets(1, &render_target_view, nullptr);
 	}
 
-	//	スプライト描画
+	//	鈴木英人フィルター
 	{
 		set_deferred_common_resource();
 		get_renderdata()->immediate_context->OMSetBlendState(get_renderdata()->blend_states[static_cast<size_t>(render_data::BLEND_STATE::NONE)].Get(), nullptr, 0xFFFFFFFF);
@@ -2023,8 +2411,26 @@ void test2_scene::final_pass(float elapsed_time)
 		get_renderdata()->immediate_context->PSSetConstantBuffers(11, 1, color_filter_constant_buffer.GetAddressOf());
 
 		get_renderdata()->immediate_context->PSSetShader(color_filter_pixel_shader.Get(), nullptr, 0);
-		auto& render_sprite = use_fxaa ? final_pass_fxaa_render_sprite : final_pass_render_sprite;
-		render_sprite->render(get_renderdata()->immediate_context.Get(), 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+		final_pass_render_sprite->render(get_renderdata()->immediate_context.Get(), 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	}
+
+	if (!use_antialias)
+		return;
+
+	//	鈴木英人フィルターの後にアンチエイリアスをかける(入力はガンマ補正済みの色)
+	antialias_pass();
+
+	//	アンチエイリアス結果をバックバッファに書き出す
+	{
+		get_renderdata()->immediate_context->OMSetRenderTargets(1, get_renderdata()->render_target_view.GetAddressOf(), nullptr);
+		get_renderdata()->set_default_sampler();
+		get_renderdata()->immediate_context->OMSetBlendState(get_renderdata()->blend_states[static_cast<size_t>(render_data::BLEND_STATE::NONE)].Get(), nullptr, 0xFFFFFFFF);
+		get_renderdata()->immediate_context->OMSetDepthStencilState(get_renderdata()->depth_stencil_states[static_cast<size_t>(render_data::DEPTH_STATE::ZT_OFF_ZW_OFF)].Get(), 0);
+		get_renderdata()->immediate_context->RSSetState(get_renderdata()->rasterizer_states[static_cast<size_t>(render_data::RASTER_STATE::CULL_NONE)].Get());
+		get_renderdata()->immediate_context->VSSetShader(sprite_vertex_shader.Get(), nullptr, 0);
+		get_renderdata()->immediate_context->IASetInputLayout(sprite_input_layout.Get());
+		get_renderdata()->immediate_context->PSSetShader(sprite_pixel_shader.Get(), nullptr, 0);
+		final_pass_antialias_render_sprite->render(get_renderdata()->immediate_context.Get(), 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	}
 }
 

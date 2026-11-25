@@ -136,21 +136,82 @@ void test_scene::initialize_character_models()
 
 void test_scene::initialize_stage_models()
 {
+	//	Sponza全体の基本設定(石材)
+	eizin_gltf_constants base{};
+#if defined(USE_EIZIN_SHADER)
+	base.material_attribute = pmx_model::material_attribute::indirect_lighting_off | pmx_model::material_attribute::noise_off;
+	base.shade_factor = 0.55f;									//	陰色 = ベースカラー * 0.55
+	base.specular_color = { 1.0f, 0.0f, 2.0f, 0.0f };			//	粗さ, 金属質, 陰影階調数, ノイズ係数
+	base.color_diff_line_factor = 1.0f;
+	base.color_diff_line_threshold = 0.005f;
+	base.color_line_adjust_saturate = 1.0f;
+	base.color_line_adjust_brightness = 0.8f;
+	base.color_posterize_factor = 64.0f;
+	base.depth_normal_outline_factor = 0.02f;
+	base.outline_adjust_parameter = { 1000.0f, 5000.0f, 1000.0f, 5000.0f };
+#endif	//	defined(USE_EIZIN_SHADER)
+
 	//	ステージ : Sponza(glTF)
-	auto& stage = add_gltf_stage(".\\resources\\Sponza\\glTF\\Sponza.gltf");
+	auto& stage = add_gltf_stage(".\\resources\\Sponza\\glTF\\Sponza.gltf", base);
 	stage.scaling = 12.5f;		//	メートル → MMD単位(1単位 = 8cm)
 	stage.rotation.y = DirectX::XM_PIDIV2;	//	回廊の長手方向をカメラの奥行き方向に合わせる
 	stage.cast_shadow = false;		//	回廊の壁で床がほぼ影になるので初期値はオフ(ImGuiで切り替え可)
+
 #if defined(USE_EIZIN_SHADER)
-	stage.constants.material_attribute = pmx_model::material_attribute::indirect_lighting_off | pmx_model::material_attribute::noise_off;
-	stage.constants.shade_factor = 0.6f;
-	stage.constants.specular_color = { 1.0f, 0.0f, 8.0f, 1.0f };		//	粗さ, 金属質, 陰影階調数, ノイズ係数
-	stage.constants.color_diff_line_factor = 1.0f;
-	stage.constants.color_diff_line_threshold = 0.005f;
-	stage.constants.color_line_adjust_saturate = 1.0f;
-	stage.constants.color_line_adjust_brightness = 1.0f;
-	stage.constants.color_posterize_factor = 24.0f;
-	stage.constants.depth_normal_outline_factor = 0.02f;
-	stage.constants.outline_adjust_parameter = { 1000.0f, 5000.0f, 1000.0f, 5000.0f };
+	//	Sponzaのマテリアルには名前が無いので番号で指定する(ベースカラーテクスチャで判別)
+	auto set_material = [&stage](std::initializer_list<int> indices, auto&& setter)
+	{
+		for (int index : indices)
+		{
+			if (index < static_cast<int>(stage.material_constants.size()))
+				setter(stage.material_constants[index]);
+		}
+	};
+
+	//	植物(0, 3) : 鮮やかな色を残しつつ細かく段階化、ラインは彩度高めで暗く
+	set_material({ 0, 3 }, [](eizin_gltf_constants& c)
+	{
+		c.shade_factor = 0.45f;
+		c.color_posterize_factor = 12.0f;
+		c.color_diff_line_threshold = 0.002f;
+		c.color_line_adjust_saturate = 1.5f;
+		c.color_line_adjust_brightness = 0.5f;
+		c.depth_normal_outline_factor = 0.01f;
+	});
+
+	//	布(幕・垂れ幕 14～19) : 平坦な色面にして、模様はカラーラインで拾う
+	set_material({ 14, 15, 16, 17, 18, 19 }, [](eizin_gltf_constants& c)
+	{
+		c.shade_factor = 0.5f;
+		c.color_posterize_factor = 8.0f;
+		c.color_diff_line_threshold = 0.002f;
+		c.color_line_adjust_saturate = 1.2f;
+		c.color_line_adjust_brightness = 0.6f;
+		c.material_attribute |= pmx_model::material_attribute::normal_depth_outline_off;	//	布のしわで線が出すぎるので
+	});
+
+	//	彫刻(盾 4、獅子 23) : 深度/法線のラインで彫りを強調
+	set_material({ 4, 23 }, [](eizin_gltf_constants& c)
+	{
+		c.shade_factor = 0.5f;
+		c.specular_color.z = 3.0f;
+		c.depth_normal_outline_factor = 0.005f;
+		c.color_diff_line_threshold = 0.01f;
+	});
+
+	//	鎖(20) : 金属なので陰影階調を増やす
+	set_material({ 20 }, [](eizin_gltf_constants& c)
+	{
+		c.shade_factor = 0.35f;
+		c.specular_color.z = 4.0f;
+		c.color_posterize_factor = 8.0f;
+	});
+
+	//	屋根瓦(24) : 細かい模様でラインがうるさくならないよう閾値を上げる
+	set_material({ 24 }, [](eizin_gltf_constants& c)
+	{
+		c.color_diff_line_threshold = 0.02f;
+		c.color_posterize_factor = 8.0f;
+	});
 #endif	//	defined(USE_EIZIN_SHADER)
 }

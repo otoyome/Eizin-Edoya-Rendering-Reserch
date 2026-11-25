@@ -233,11 +233,15 @@ protected:
 		DirectX::XMFLOAT4X4			world_matrix{ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
 		DirectX::XMFLOAT4X4			previous_world_matrix{ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
 		bool						cast_shadow{ true };
-		eizin_gltf_constants		constants;
+
+		//	マテリアル毎の英人パラメーター(glTFのマテリアル番号で参照する)
+		std::vector<eizin_gltf_constants>					material_constants;
+		Microsoft::WRL::ComPtr<ID3D11Buffer>				material_constant_buffer;
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>	material_constant_shader_resource_view;
 	};
 
-	//	glTFステージを追加する(シェーダー登録も行う)
-	gltf_stage& add_gltf_stage(const char* filename);
+	//	glTFステージを追加する(シェーダー登録と、全マテリアルに default_constants を設定したパラメーターバッファの生成を行う)
+	gltf_stage& add_gltf_stage(const char* filename, const eizin_gltf_constants& default_constants = {});
 
 	//	GBuffer生成用パイプラインステート名
 	static const char* get_gbuffer_pipeline_state_name();
@@ -259,14 +263,34 @@ protected:
 	std::vector<int> deferred_models;
 	std::vector<int> shadow_models;
 	std::vector<gltf_stage> gltf_stages;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> eizin_gltf_constant_buffer;
 
 	//	glTFステージ描画
 	void render_gltf_stages_gbuffer();
 	void render_gltf_stages_shadow(UINT light_shadow_mask);
 
 public:
-	//	FXAA(鈴木英人フィルターの前に適応する)
+	//	鈴木英人フィルターの出力先(アンチエイリアスを使う場合のみ。アンチエイリアスの入力になる)
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> filtered_render_target_view;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> filtered_shader_resource_view;
+
+	//	アンチエイリアス(ファイナルパス = 鈴木英人フィルターの後に適応する)
+	enum class antialias_mode : int
+	{
+		none,
+		fxaa,
+		smaa,
+		taa,
+	};
+	antialias_mode antialias = antialias_mode::fxaa;
+
+	//	アンチエイリアス結果の出力先(シーンカラーと同じ形式)
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> antialias_render_target_view;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> antialias_shader_resource_view;
+	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> antialias_unordered_access_view;
+	std::unique_ptr<sprite> final_pass_antialias_render_sprite;	//	アンチエイリアス結果 → バックバッファ
+	void antialias_pass();
+
+	//	FXAA
 	struct fxaa_constants
 	{
 		float subpixel_quality = 0.75f;		//	サブピクセルのエイリアス除去量
@@ -274,15 +298,64 @@ public:
 		float edge_threshold_min = 0.0833f;	//	暗部を処理対象外にする閾値
 		float dummy = 0.0f;
 	};
-	bool use_fxaa = true;
 	fxaa_constants fxaa_constant;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> fxaa_constant_buffer;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> fxaa_pixel_shader;
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> fxaa_render_target_view;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> fxaa_shader_resource_view;
-	std::unique_ptr<sprite> fxaa_render_sprite;			//	シーンカラー → FXAA
-	std::unique_ptr<sprite> final_pass_fxaa_render_sprite;	//	FXAA結果 → 鈴木英人フィルター
+	std::unique_ptr<sprite> fxaa_render_sprite;			//	鈴木英人フィルター結果 → FXAA
 	void fxaa_pass();
+
+	//	SMAA(DLSS-Denoise-Sampleから移植)
+	enum smaa_buffer_id
+	{
+		smaa_edge,
+		smaa_blend,
+		smaa_buffer_max,
+	};
+	struct smaa_constants
+	{
+		float smaa_threshold = 0.05f;						//	エッジ検出閾値
+		UINT smaa_max_search_steps = 32;					//	水平/垂直パターン検索の最大ステップ数
+		UINT smaa_max_search_steps_diagonal = 16;			//	対角パターン検索の最大ステップ数
+		UINT smaa_corner_rounding = 25;						//	角の丸み
+		float smaa_local_contrast_adaptation_factor = 2.0f;	//	不要な交差エッジを除去するための係数
+		UINT smaa_draw_edge = 0;							//	デバッグ用 : 検出エッジ表示
+		DirectX::XMUINT2 smaa_dummy{};
+	};
+	smaa_constants smaa_constant;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> smaa_constant_buffer;
+	Microsoft::WRL::ComPtr<ID3D11VertexShader> smaa_edge_detection_vertex_shader;
+	Microsoft::WRL::ComPtr<ID3D11PixelShader> smaa_edge_detection_pixel_shader;
+	Microsoft::WRL::ComPtr<ID3D11VertexShader> smaa_blending_weight_calculation_vertex_shader;
+	Microsoft::WRL::ComPtr<ID3D11PixelShader> smaa_blending_weight_calculation_pixel_shader;
+	Microsoft::WRL::ComPtr<ID3D11VertexShader> smaa_neighborhood_blending_vertex_shader;
+	Microsoft::WRL::ComPtr<ID3D11PixelShader> smaa_neighborhood_blending_pixel_shader;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> smaa_buffer_render_target_view[smaa_buffer_max];
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> smaa_buffer_shader_resource_view[smaa_buffer_max];
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> smaa_area_shader_resource_view;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> smaa_search_shader_resource_view;
+	void smaa_pass();
+
+	//	TAA(Lighting-Sampleから移植)
+	struct taa_constants
+	{
+		UINT taa_reset = 1;								//	履歴リセット
+		UINT taa_history_display = 0;					//	デバッグ用 : ブレンド率表示
+		DirectX::XMFLOAT2 taa_jitter{ 0.0f, 0.0f };		//	現在フレームのジッター(UV)
+
+		DirectX::XMFLOAT2 taa_previous_jitter{ 0.0f, 0.0f };	//	前フレームのジッター(UV)
+		float taa_blend_min = 1.0f / 8.0f;				//	静止部分の現在フレーム混合率
+		float taa_blend_max = 1.0f / 4.0f;				//	動き/コントラストが大きい部分の現在フレーム混合率
+	};
+	bool taa_is_sub_pixel_jitter = true;
+	taa_constants taa_constant;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> taa_constant_buffer;
+	Microsoft::WRL::ComPtr<ID3D11ComputeShader> temporal_anti_alias_compute_shader;
+	int taa_frame_index = 0;
+	int taa_jitter_index = 0;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> taa_accumlate_shader_resource_view[2];
+	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> taa_accumlate_unordered_access_view[2];
+	void update_taa_jitter();
+	void taa_pass();
 
 public:
 	struct color_filter_constants
