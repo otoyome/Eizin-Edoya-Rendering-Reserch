@@ -1,0 +1,8 @@
+# Visual Studio
+.vs/
+*.user
+
+# Build outputs
+x64/
+3dgp/
+*.cso

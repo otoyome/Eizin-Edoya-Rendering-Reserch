@@ -3,7 +3,8 @@
 #include "shader.h"
 #include "texture.h"
 
-#include "ducks_scene.h"
+#include "test2_scene.h"
+#include "test_scene.h"
 
 framework::framework(HWND hwnd) : hwnd(hwnd)
 {
@@ -21,7 +22,8 @@ bool framework::initialize()
 	renderdata = std::make_unique<render_data>(hwnd);
 
 	//	初回シーン登録
-	scene = std::make_unique<ducks_scene>(hwnd, renderdata.get());
+	//	再配布禁止モデルを含まないシーンを初回シーンとする
+	scene = std::make_unique<test_scene>(hwnd, renderdata.get());
 	if (scene)
 		return scene->initialize();
 	return true;
@@ -32,7 +34,8 @@ void framework::scene_button_gui()
 #ifdef USE_IMGUI
 	if (ImGui::Begin("scene select"))
 	{
-		change_scene_button_gui<ducks_scene>(u8"ducks scene");
+		change_scene_button_gui<test2_scene>(u8"test2 scene");
+		change_scene_button_gui<test_scene>(u8"test scene");
 	}
 	ImGui::End();
 #endif

@@ -124,7 +124,10 @@
     <ClCompile Include="implot\implot.cpp">
       <Filter>implot</Filter>
     </ClCompile>
-    <ClCompile Include="ducks_scene.cpp">
+    <ClCompile Include="test2_scene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="test_scene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
     <ClCompile Include="compute_particle_system.cpp">
@@ -216,7 +219,10 @@
     <ClInclude Include="implot\implot.h">
       <Filter>implot</Filter>
     </ClInclude>
-    <ClInclude Include="ducks_scene.h">
+    <ClInclude Include="test2_scene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="test_scene.h">
       <Filter>Scenes</Filter>
     </ClInclude>
     <ClInclude Include="compute_particle_system.h">
@@ -324,6 +330,12 @@
       <Filter>Shaders\pmx</Filter>
     </FxCompile>
     <FxCompile Include="color_filter_ps.hlsl">
+      <Filter>Scenes</Filter>
+    </FxCompile>
+    <FxCompile Include="fxaa_ps.hlsl">
+      <Filter>Scenes</Filter>
+    </FxCompile>
+    <FxCompile Include="eizin_gltf_gbuffer_ps.hlsl">
       <Filter>Scenes</Filter>
     </FxCompile>
     <FxCompile Include="eizin_model_gbuffer_ps.hlsl">

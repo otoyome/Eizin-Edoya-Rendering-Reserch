@@ -19,6 +19,7 @@ static const uint g_buffer_stencil_color_outline_off        = 1 << 22;  //  色に
 static const uint g_buffer_stencil_noise_off                = 1 << 23;  //  英人特有の影部分に対してのノイズ描画フラグ
 static const uint g_buffer_stencil_color_posterize_off      = 1 << 24;  //  色のポスタライズ適応フラグ
 static const uint g_buffer_stencil_face_shadow_on           = 1 << 25;  //  顔用シャドウ処理適応フラグ
+static const uint g_buffer_stencil_xz_plane_lighting        = 1 << 26;  //  XZ平面でのシャドウ処理適応フラグ
 
 
 //static const uint g_buffer_stencil_ = 1 << 31;

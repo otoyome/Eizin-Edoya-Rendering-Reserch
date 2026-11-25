@@ -82,6 +82,7 @@ public:
 		noise_off					= 1 << 23,	//	英人特有の影部分に対してのノイズ描画フラグ
 		color_postarize_off			= 1 << 24,	//	色のポスタライズ適応フラグ
 		face_shadow_on				= 1 << 25,	//	顔用シャドウ処理適応フラグ
+		xz_plane_lighting			= 1 << 26,	//	XZ平面でのライティング処理適応フラグ
 	};
 
 	struct material

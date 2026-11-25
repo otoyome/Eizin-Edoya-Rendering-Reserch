@@ -77,14 +77,26 @@ DirectLighting integrate_bxdf(in GBufferData gbuffer_data, in LightingData light
             float3 lighting_direction = -normalize(lighting_data.direction);
             float3 color;
 
-#if 0   //  コンタクトシャドウ側でやる
-            if (IsGBufferFlags(gbuffer_data, g_buffer_stencil_face_shadow_on))
+            //  XZ平面ライティング
+            if (IsGBufferFlags(gbuffer_data, g_buffer_stencil_xz_plane_lighting))
             {
-                float shading_factor = sdf_shadow_threshold_mask(gbuffer_data, lighting_data.direction);
+                static const float max_sin = sin(15.0 * (3.14159265f / 180.0f));   //  sin(30°) : 仰角の上限
+
+                float3 L = lighting_direction;
+                float  horizontal = length(L.xz);
+                if (horizontal < 1e-4f)
+                {
+                    //  真上/真下からの光 : 水平方向が決まらないので顔の正面方向を使う
+                    L.xz = gbuffer_data.mesh_direction.zw;
+                    horizontal = 1.0f;
+                }
+                L.y  = clamp(L.y, -max_sin, max_sin);
+                L.xz = L.xz / horizontal * sqrt(1.0f - L.y * L.y);
+
+                float shading_factor = posterize((dot(normal, L) * 0.5f + 0.5f) * lighting_data.shading_attenuation, gbuffer_data.occlusion_factor * 255.0f);
                 color = lerp(shade_color, gbuffer_data.base_color, shading_factor);
             }
             else
-#endif
             {
                 //  シェーディングによる元色を算出
                 float shading_factor = posterize((dot(normal, lighting_direction) * 0.5f + 0.5f) * lighting_data.shading_attenuation, gbuffer_data.occlusion_factor * 255.0f);

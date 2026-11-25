@@ -53,7 +53,13 @@ public:
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 		ImPlot::CreateContext();
-		ImGui::GetIO().Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\consola.ttf", 14.0f, nullptr, glyphRangesJapanese);
+		ImGui::GetIO().Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\consola.ttf", 14.0f, nullptr, ImGui::GetIO().Fonts->GetGlyphRangesDefault());
+		//	consola.ttf has no Japanese glyphs, so merge Meiryo into the same font for them
+		{
+			ImFontConfig japanese_font_config;
+			japanese_font_config.MergeMode = true;
+			ImGui::GetIO().Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\meiryo.ttc", 14.0f, &japanese_font_config, glyphRangesJapanese);
+		}
 		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 		ImGui_ImplWin32_Init(hwnd);
