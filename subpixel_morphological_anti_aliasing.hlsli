@@ -1,9 +1,6 @@
 #ifndef __SUBPIXEL_MORPHOLOGICAL_ANTI_ALIASING_HLSLI__
 #define __SUBPIXEL_MORPHOLOGICAL_ANTI_ALIASING_HLSLI__
 
-//  SMAA (Enhanced Subpixel Morphological Anti-Aliasing) wrapper
-//  Ported from DLSS-Denoise-Sample. Library: subpixel_morphological_anti_aliasing/SMAA.hlsli (MIT, Jorge Jimenez et al.)
-
 #include "scene_constant_buffer.hlsli"
 
 SamplerState smaa_point_sampler : register(s0);
@@ -30,7 +27,6 @@ cbuffer SMAA_CONSTANT_BUFFER : register(b13)
 
 #define SMAA_LINEAR_SAMPLER smaa_linear_sampler
 #define SMAA_POINT_SAMPLER smaa_point_sampler
-//  viewport_rect.zw holds the render target size
 #define SMAA_RT_METRICS float4(1.0f / viewport_rect.z, 1.0f / viewport_rect.w, viewport_rect.z, viewport_rect.w)
 #include "subpixel_morphological_anti_aliasing/SMAA.hlsli"
 
@@ -56,7 +52,6 @@ struct NEIGHBORHOOD_BLENDING_OUT
     float4 offset : TEXCOORD1;
 };
 
-//  Full screen quad from SV_VertexID (draw 4 vertices as a triangle strip)
 void GetPositionUV(out float4 position, out float2 uv, in uint index)
 {
     const float2 vertex_id = float2(index / 2u, index % 2u);

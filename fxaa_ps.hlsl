@@ -1,17 +1,13 @@
 #include "sprite.hlsli"
 
-//  FXAA (Fast Approximate Anti-Aliasing)
-//  Algorithm based on Timothy Lottes' FXAA 3.11 (quality preset).
-//  Input is the Eizin filter output (gamma-encoded LDR color), applied after the final pass.
-
 Texture2D scene_map : register(t0);
 SamplerState linear_clamp_sampler_state : register(s4);
 
 cbuffer FXAA_CONSTANT_BUFFER : register(b12)
 {
-    float fxaa_subpixel_quality;        //  Amount of sub-pixel aliasing removal (0 = off, 1 = soft)
-    float fxaa_edge_threshold;          //  Minimum local contrast required to apply the algorithm
-    float fxaa_edge_threshold_min;      //  Trims the algorithm from processing darks
+    float fxaa_subpixel_quality;        //  サブピクセルのエイリアス除去量
+    float fxaa_edge_threshold;          //  処理対象とする最小コントラスト
+    float fxaa_edge_threshold_min;      //  暗部を処理対象外にする閾値
     float fxaa_dummy;
 };
 
@@ -51,7 +47,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     float luma_min = min(luma_center, min(min(luma_n, luma_s), min(luma_e, luma_w)));
     float luma_range = luma_max - luma_min;
 
-    //  Low contrast area: no anti-aliasing
+    //  コントラストが低い所は処理しない
     if (luma_range < max(fxaa_edge_threshold_min, luma_max * fxaa_edge_threshold))
     {
         return center_color;
@@ -69,7 +65,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     float luma_north_corners = luma_nw + luma_ne;
     float luma_south_corners = luma_sw + luma_se;
 
-    //  Edge direction estimation
+    //  エッジの方向を判定
     float edge_horizontal = abs(-2.0f * luma_w + luma_west_corners)
                           + abs(-2.0f * luma_center + luma_ns) * 2.0f
                           + abs(-2.0f * luma_e + luma_east_corners);
@@ -78,7 +74,6 @@ float4 main(VS_OUT pin) : SV_TARGET
                           + abs(-2.0f * luma_s + luma_south_corners);
     bool is_horizontal = edge_horizontal >= edge_vertical;
 
-    //  Choose the side of the edge with the steepest gradient
     float luma_negative = is_horizontal ? luma_n : luma_w;
     float luma_positive = is_horizontal ? luma_s : luma_e;
     float gradient_negative = abs(luma_negative - luma_center);
@@ -99,14 +94,13 @@ float4 main(VS_OUT pin) : SV_TARGET
         gradient_scaled = 0.25f * gradient_positive;
     }
 
-    //  Move half a pixel onto the edge
     float2 edge_uv = uv;
     if (is_horizontal)
         edge_uv.y += step_length * 0.5f;
     else
         edge_uv.x += step_length * 0.5f;
 
-    //  Search along the edge in both directions
+    //  エッジに沿って両方向に探索
     float2 search_step = is_horizontal ? float2(rcp_frame.x, 0.0f) : float2(0.0f, rcp_frame.y);
     float2 uv_negative = edge_uv - search_step;
     float2 uv_positive = edge_uv + search_step;
@@ -132,19 +126,17 @@ float4 main(VS_OUT pin) : SV_TARGET
         }
     }
 
-    //  Distance to both ends of the edge
     float distance_negative = is_horizontal ? (uv.x - uv_negative.x) : (uv.y - uv_negative.y);
     float distance_positive = is_horizontal ? (uv_positive.x - uv.x) : (uv_positive.y - uv.y);
     bool is_negative_closer = distance_negative < distance_positive;
     float distance_final = min(distance_negative, distance_positive);
     float edge_length = distance_negative + distance_positive;
 
-    //  Only blend when the luma variation at the closer end is coherent with the center
     bool is_luma_center_smaller = (luma_center - luma_local_average) < 0.0f;
     bool correct_variation = ((is_negative_closer ? luma_end_negative : luma_end_positive) < 0.0f) != is_luma_center_smaller;
     float pixel_offset = correct_variation ? (-distance_final / edge_length + 0.5f) : 0.0f;
 
-    //  Sub-pixel anti-aliasing
+    //  サブピクセルアンチエイリアス
     float luma_average = (1.0f / 12.0f) * (2.0f * (luma_ns + luma_we) + luma_west_corners + luma_east_corners);
     float subpixel_offset1 = saturate(abs(luma_average - luma_center) / luma_range);
     float subpixel_offset2 = (-2.0f * subpixel_offset1 + 3.0f) * subpixel_offset1 * subpixel_offset1;

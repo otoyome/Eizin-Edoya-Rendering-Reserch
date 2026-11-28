@@ -13,6 +13,6 @@ float4 main(BLENDING_WEIGHT_OUT pin) : SV_TARGET0
         edge_map,
         area_map,
         search_map,
-        0.0f    //  subsample indices (no temporal SMAA)
+        0.0f    //  ƒeƒ“ƒ|ƒ‰ƒ‹SMAA‚ÍŽg‚í‚È‚¢
     );
 }

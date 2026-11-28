@@ -80,7 +80,7 @@ DirectLighting integrate_bxdf(in GBufferData gbuffer_data, in LightingData light
             //  XZ平面ライティング
             if (IsGBufferFlags(gbuffer_data, g_buffer_stencil_xz_plane_lighting))
             {
-                static const float max_sin = sin(15.0 * (3.14159265f / 180.0f));   //  sin(30°) : 仰角の上限
+                static const float max_sin = sin(15.0 * (3.14159265f / 180.0f));   // ある程度幅を持たせる
 
                 float3 L = lighting_direction;
                 float  horizontal = length(L.xz);
@@ -105,8 +105,6 @@ DirectLighting integrate_bxdf(in GBufferData gbuffer_data, in LightingData light
 
             //  拡散反射のみを利用
             result.diffuse = color * lighting_data.color * lighting_data.shadowing_attenuation;
-
-            //  鏡面反射は使用上あまりしたくない(海の時に使いたい気持ちはあるので、海専用処理として実装は有)
             result.specular = 0;
             break;
         }

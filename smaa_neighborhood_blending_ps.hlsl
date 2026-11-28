@@ -13,7 +13,7 @@ float4 main(NEIGHBORHOOD_BLENDING_OUT pin) : SV_TARGET0
         blend_map
     );
 
-    //  Debug: show detected edges
+    //  デバッグ用 : 検出エッジ表示
     if (smaa_draw_edge)
         color.rg += edge_map.Load(int3(pin.position.xy, 0)).rg;
 

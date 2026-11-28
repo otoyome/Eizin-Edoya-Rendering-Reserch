@@ -1,6 +1,5 @@
 #include "subpixel_morphological_anti_aliasing.hlsli"
 
-//  Input is the Eizin filter output (gamma-encoded LDR color), applied after the final pass.
 Texture2D color_map : register(t0);
 
 float smaa_luma(float2 uv)
@@ -11,7 +10,6 @@ float smaa_luma(float2 uv)
 
 float2 main(EDGE_DETECTION_OUT pin) : SV_TARGET0
 {
-    //  Same algorithm as SMAALumaEdgeDetectionPS, on the gamma-encoded color
     float2 threshold = float2(SMAA_THRESHOLD, SMAA_THRESHOLD);
 
     float L = smaa_luma(pin.uv);
@@ -37,7 +35,6 @@ float2 main(EDGE_DETECTION_OUT pin) : SV_TARGET0
     max_delta = max(max_delta.xy, delta.zw);
     float final_delta = max(max_delta.x, max_delta.y);
 
-    //  Local contrast adaptation
     edges.xy *= step(final_delta, SMAA_LOCAL_CONTRAST_ADAPTATION_FACTOR * delta.xy);
     return edges;
 }
